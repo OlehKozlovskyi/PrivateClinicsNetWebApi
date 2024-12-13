@@ -11,7 +11,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessLogic.Services
+namespace PrivateClinicsWebNet.DataAccess
 {
     public class AuthService
     {
