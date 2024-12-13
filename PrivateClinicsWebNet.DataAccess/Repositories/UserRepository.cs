@@ -30,5 +30,10 @@ namespace PrivateClinicsWebNet.DataAccess.Repositories
         {
             return await _userManager.FindByEmailAsync(email);         
         }
+
+        public async Task AddToRoleAsync(IdentityUser user, string role)
+        {
+            await _userManager.AddToRoleAsync(user, role);
+        }
     }
 }

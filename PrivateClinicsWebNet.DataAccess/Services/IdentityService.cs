@@ -1,5 +1,4 @@
-﻿using BusinessLogic.Validators;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using PrivateClinicsWebNet.DataAccess.Exceptions;
@@ -14,12 +13,12 @@ using System.Threading.Tasks;
 
 namespace BusinessLogic.Services
 {
-    public class AuthService
+    public class IdentityService
     {
         private readonly UserRepository _userRepository;
         private readonly IConfiguration _configuration;
 
-        public AuthService(UserRepository userRepository, IConfiguration configuration)
+        public IdentityService(UserRepository userRepository, IConfiguration configuration)
         {
             _userRepository = userRepository;
             _configuration = configuration;
@@ -40,6 +39,17 @@ namespace BusinessLogic.Services
 
             var token = GenerateJwt(user, email);
             return token;
+        }
+
+        public async Task Register(string email, string password, string role)
+        {
+            var user = new IdentityUser { UserName = email, Email = email };
+            var result = await _userRepository.RegisterUser(user, password);
+            if (!result.Succeeded)
+            {
+                throw new RegistrationFailedException();
+            }
+            await _userRepository.AddToRoleAsync(user, role);
         }
 
         private string GenerateJwt(IdentityUser user, string email)
@@ -74,7 +84,5 @@ namespace BusinessLogic.Services
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
             return new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
         }
-
-
     }
 }
