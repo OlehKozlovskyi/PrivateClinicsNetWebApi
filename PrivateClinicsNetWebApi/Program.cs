@@ -1,4 +1,6 @@
 
+using PrivateClinicsWebNet.DataAccess;
+
 namespace PrivateClinicsNetWebApi
 {
     public class Program
@@ -6,7 +8,8 @@ namespace PrivateClinicsNetWebApi
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-
+            //Add database
+ 
             // Add services to the container.
             builder.Services.AddAuthorization();
 
