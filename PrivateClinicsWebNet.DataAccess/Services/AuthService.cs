@@ -13,12 +13,12 @@ using System.Threading.Tasks;
 
 namespace BusinessLogic.Services
 {
-    public class IdentityService
+    public class AuthService
     {
         private readonly UserRepository _userRepository;
         private readonly IConfiguration _configuration;
 
-        public IdentityService(UserRepository userRepository, IConfiguration configuration)
+        public AuthService(UserRepository userRepository, IConfiguration configuration)
         {
             _userRepository = userRepository;
             _configuration = configuration;
