@@ -1,6 +1,8 @@
 ﻿using BusinessLogic.Validators;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using PrivateClinicsWebNet.DataAccess.Exceptions;
 using PrivateClinicsWebNet.DataAccess.Repositories;
 using System;
 using System.Collections.Generic;
@@ -16,45 +18,62 @@ namespace BusinessLogic.Services
     {
         private readonly UserRepository _userRepository;
         private readonly IConfiguration _configuration;
-        private readonly CredentialsValidator _credentialsValidator;
 
-        public AuthService(UserRepository userRepository, IConfiguration configuration, 
-            CredentialsValidator credentialsValidator)
+        public AuthService(UserRepository userRepository, IConfiguration configuration)
         {
             _userRepository = userRepository;
             _configuration = configuration;
-            _credentialsValidator = credentialsValidator;
         }
 
         public async Task<string> Login(string email, string password)
         {
-            var user = await _userRepository.FindByEmailAsync(email);
-            bool isUserRegisteredFlag = _credentialsValidator.IsUserRegistered(user);
-            bool isPasswordValidFlag = await _credentialsValidator.IsPasswordValid(user, password);
-            if ( isUserRegisteredFlag && isPasswordValidFlag)
+           var user = await _userRepository.FindByEmailAsync(email);
+            if (user == null)
             {
-                var claims = new[]
-                {
-                    new Claim(JwtRegisteredClaimNames.Sub, user.Id),
-                    new Claim(JwtRegisteredClaimNames.Email, email)
-                };
-
-                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
-                var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-                var token = new JwtSecurityToken(
-                    issuer: _configuration["Jwt:Issuer"],
-                    audience: _configuration["Jwt:Audience"],
-                    claims: claims,
-                    expires: DateTime.Now.AddDays(30),
-                    signingCredentials: creds);
-
-                return new JwtSecurityTokenHandler().WriteToken(token);
+                throw new UserNotFoundException();
             }
+            var passwordValid = await _userRepository.CheckPasswordAsync(user, password);
+            if (!passwordValid)
+            {
+                throw new InvalidPasswordException();
+            }
+
+            var token = GenerateJwt(user, email);
+            return token;
         }
 
+        private string GenerateJwt(IdentityUser user, string email)
+        {
+            var token = GenerateEncryptedToken(GetClaimsAsync(user, email), GetSigningCredentials());
+            return token;
+        }
 
+        private string GenerateEncryptedToken(IEnumerable<Claim> claimsList, SigningCredentials signingCredentials)
+        {
+            var token = new JwtSecurityToken(
+                claims: claimsList,
+                expires: DateTime.UtcNow.AddDays(14),
+                signingCredentials: signingCredentials);
+            var tokenHandler = new JwtSecurityTokenHandler();
+            string encryptedToken = tokenHandler.WriteToken(token);
+            return encryptedToken;
+        }
 
-        //private string GenerateEncryptedToken()
+        private IEnumerable<Claim> GetClaimsAsync(IdentityUser user, string email)
+        {
+            var claims = new List<Claim>() 
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, user.Id),
+                new Claim(JwtRegisteredClaimNames.Email, email)
+            };
+            return claims;
+        }
+
+        private SigningCredentials GetSigningCredentials()
+        {
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+            return new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        }
 
 
     }
