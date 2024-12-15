@@ -5,20 +5,19 @@ using PrivateClinicsWebNet.DataAccess;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using PrivateClinicsWebNet.DataAccess.Repositories;
+using Microsoft.OpenApi.Models;
 
 namespace PrivateClinicsNetWebApi
 {
     public class ServicesConfigurator
     {
-        private readonly WebApplicationBuilder _webApplicationBuilder;
         private readonly IServiceCollection _services;
         private readonly IConfiguration _configuration;
 
-        public ServicesConfigurator(WebApplicationBuilder builder, IConfiguration configuration)
+        public ServicesConfigurator(WebApplicationBuilder builder)
         {
-            _webApplicationBuilder = builder;
-            _configuration = configuration;
-            _services = _webApplicationBuilder.Services;
+            _configuration = builder.Configuration;
+            _services = builder.Services;
         }
 
         public void ConfigureServices()
@@ -27,7 +26,7 @@ namespace PrivateClinicsNetWebApi
             ConfigAuthorization();
             ConfigAuthentication();
             ConfigCustomServices();
-            _services.AddOpenApi();
+            ConfigSwagger();
         }
 
         private void ConfigPostgresDatabase()
@@ -69,6 +68,20 @@ namespace PrivateClinicsNetWebApi
         {
             _services.AddScoped<UserRepository>();
             _services.AddScoped<AuthService>();
+        }
+
+        private void ConfigSwagger()
+        {
+            _services.AddEndpointsApiExplorer();
+            _services.AddSwaggerGen(options =>
+            {
+                options.SwaggerDoc("v1", new OpenApiInfo()
+                {
+                    Title = "API Documentation",
+                    Version = "v1",
+                    Description = "Документація для АРІ з автентифікацією JWT"
+                });
+            });
         }
     }
 }
