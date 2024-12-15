@@ -1,25 +1,42 @@
 
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using PrivateClinicsWebNet.DataAccess;
+using PrivateClinicsWebNet.DataAccess.Repositories;
+using System.Configuration;
+using System.Text;
 
 namespace PrivateClinicsNetWebApi
 {
     public class Program
     {
+        private WebApplicationBuilder _builder;
+        private IConfiguration _configuration;
+
         public static void Main(string[] args)
         {
-            var builder = WebApplication.CreateBuilder(args);
+            var program = new Program();
+            program.Run(args);
+        }
+
+        private void Run(string[] args)
+        {
+            _builder = WebApplication.CreateBuilder(args);
+            _configuration = _builder.Configuration;
             //Add database
- 
+
             // Add services to the container.
-            builder.Services.AddAuthorization();
+            //_builder.Services.AddAuthorization();
 
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-            builder.Services.AddOpenApi();
             
+
             //Add service Swagger
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
-            var app = builder.Build();
+            _builder.Services.AddEndpointsApiExplorer();
+            _builder.Services.AddSwaggerGen();
+            var app = _builder.Build();
 
             if (app.Environment.IsDevelopment())
             {
