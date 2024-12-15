@@ -1,5 +1,5 @@
-﻿using PrivateClinicsWebNet.DataAccess.Repositories;
-using PrivateClinicsWebNet.DataAccess.Exceptions;
+﻿using PrivateClinicsWebNet.BusinessLogic.Repositories;
+using PrivateClinicsWebNet.Application.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;

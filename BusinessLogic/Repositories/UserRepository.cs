@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PrivateClinicsWebNet.DataAccess.Repositories
+namespace PrivateClinicsWebNet.BusinessLogic.Repositories
 {
     public class UserRepository
     {

@@ -7,7 +7,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrivateClinicsNetWebApi", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrivateClinicsWebNet.DataAccess", "PrivateClinicsWebNet.DataAccess\PrivateClinicsWebNet.DataAccess.csproj", "{FE4D3B98-6DB3-4CA4-A310-63A2073BBDB9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessLogic", "BusinessLogic\BusinessLogic.csproj", "{5B3CE7B7-7417-4867-A4DE-2977E79E6BE5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrivateClinicsWebNet.BusinessLogic", "BusinessLogic\PrivateClinicsWebNet.BusinessLogic.csproj", "{5B3CE7B7-7417-4867-A4DE-2977E79E6BE5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrivateClinicsWebNet.Application", "PrivateClinicsWebNet.Application\PrivateClinicsWebNet.Application.csproj", "{427D99B4-581F-48AF-ABBA-8D015AD1B100}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{5B3CE7B7-7417-4867-A4DE-2977E79E6BE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5B3CE7B7-7417-4867-A4DE-2977E79E6BE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5B3CE7B7-7417-4867-A4DE-2977E79E6BE5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{427D99B4-581F-48AF-ABBA-8D015AD1B100}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{427D99B4-581F-48AF-ABBA-8D015AD1B100}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{427D99B4-581F-48AF-ABBA-8D015AD1B100}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{427D99B4-581F-48AF-ABBA-8D015AD1B100}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

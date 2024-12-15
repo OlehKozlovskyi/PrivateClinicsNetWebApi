@@ -2,9 +2,9 @@
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.EntityFrameworkCore;
 using PrivateClinicsWebNet.DataAccess;
+using PrivateClinicsWebNet.BusinessLogic.Repositories;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
-using PrivateClinicsWebNet.DataAccess.Repositories;
 using Microsoft.OpenApi.Models;
 using PrivateClinicsWebNet.DataAccess.Services;
 

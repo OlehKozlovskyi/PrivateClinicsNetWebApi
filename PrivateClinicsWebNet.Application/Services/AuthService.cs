@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using PrivateClinicsWebNet.DataAccess.Exceptions;
-using PrivateClinicsWebNet.DataAccess.Repositories;
+using PrivateClinicsWebNet.Application.Exceptions;
+using PrivateClinicsWebNet.BusinessLogic.Repositories;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;

@@ -14,6 +14,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\BusinessLogic\PrivateClinicsWebNet.BusinessLogic.csproj" />
+    <ProjectReference Include="..\PrivateClinicsWebNet.Application\PrivateClinicsWebNet.Application.csproj" />
     <ProjectReference Include="..\PrivateClinicsWebNet.DataAccess\PrivateClinicsWebNet.DataAccess.csproj" />
   </ItemGroup>
 

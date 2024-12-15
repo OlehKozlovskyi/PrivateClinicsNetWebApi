@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using PrivateClinicsWebNet.DataAccess.DTOs;
+using PrivateClinicsWebNet.Application.DTOs;
 using PrivateClinicsWebNet.DataAccess.Services;
 
 namespace PrivateClinicsNetWebApi.Controllers
