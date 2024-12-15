@@ -6,6 +6,7 @@ using System.Text;
 using Microsoft.AspNetCore.Identity;
 using PrivateClinicsWebNet.DataAccess.Repositories;
 using Microsoft.OpenApi.Models;
+using PrivateClinicsWebNet.DataAccess.Services;
 
 namespace PrivateClinicsNetWebApi
 {
@@ -67,7 +68,9 @@ namespace PrivateClinicsNetWebApi
         private void ConfigCustomServices()
         {
             _services.AddScoped<UserRepository>();
+            _services.AddScoped<RoleRepository>();
             _services.AddScoped<AuthService>();
+            _services.AddScoped<RoleService>();
         }
 
         private void ConfigSwagger()
