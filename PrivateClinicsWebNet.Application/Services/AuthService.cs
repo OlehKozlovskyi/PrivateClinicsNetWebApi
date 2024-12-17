@@ -41,7 +41,7 @@ namespace PrivateClinicsWebNet.DataAccess
             return token;
         }
 
-        public async Task Register(string email, string password, string role)
+        public async Task Register(string email, string password)
         {
             var user = new IdentityUser { UserName = email, Email = email };
             var result = await _userRepository.RegisterUser(user, password);
@@ -49,7 +49,7 @@ namespace PrivateClinicsWebNet.DataAccess
             {
                 throw new RegistrationFailedException();
             }
-            await _userRepository.AddToRoleAsync(user, role);
+            await _userRepository.AddToRoleAsync(user, "Patient");
         }
 
         private string GenerateJwt(IdentityUser user, string email)

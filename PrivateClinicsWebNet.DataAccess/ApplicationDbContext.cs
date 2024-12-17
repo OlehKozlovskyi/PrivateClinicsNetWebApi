@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace PrivateClinicsWebNet.DataAccess
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext<IdentityUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             :base(options){ }

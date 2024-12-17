@@ -38,7 +38,14 @@ namespace PrivateClinicsNetWebApi
 
         private void ConfigAuthorization()
         {
-            _services.AddIdentity<IdentityUser, IdentityRole>()
+            _services.AddIdentity<IdentityUser, IdentityRole>(options =>
+            {
+                options.Password.RequireDigit = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequiredLength = 6;
+            })
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
         }

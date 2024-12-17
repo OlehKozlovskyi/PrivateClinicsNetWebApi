@@ -9,5 +9,5 @@ namespace PrivateClinicsWebNet.BusinessLogic.Exceptions;
 public class RoleAlreadyExistException : Exception
 {
     public RoleAlreadyExistException(string roleName) 
-        :base($"Role {roleName} already exist."){ }
+        :base($"The role already exists in the system."){ }
 }
