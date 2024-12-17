@@ -7,6 +7,7 @@ using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.OpenApi.Models;
 using PrivateClinicsWebNet.DataAccess.Services;
+using System.Security.Cryptography.Xml;
 
 namespace PrivateClinicsNetWebApi
 {
@@ -90,6 +91,31 @@ namespace PrivateClinicsNetWebApi
                     Title = "API Documentation",
                     Version = "v1",
                     Description = "Документація для АРІ з автентифікацією JWT"
+                });
+
+                options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "Bearer",
+                    BearerFormat = "JWT",
+                    In = ParameterLocation.Header,
+                    Description = "Enter bearer token"
+                });
+
+                options.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        new string[]{ }
+                    }
                 });
             });
         }
