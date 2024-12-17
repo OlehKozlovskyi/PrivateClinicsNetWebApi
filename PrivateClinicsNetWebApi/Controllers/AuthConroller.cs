@@ -20,7 +20,7 @@ namespace PrivateClinicsNetWebApi.Controllers
         {
             try
             {
-                await _authService.Register(model.Email, model.Password);
+                await _authService.Register(model.Email, model.Password, model.UserRole);
                 return Ok("User registered successfully");
             }
             catch (Exception ex)

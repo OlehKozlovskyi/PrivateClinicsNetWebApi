@@ -14,10 +14,5 @@ namespace PrivateClinicsWebNet.DataAccess
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             :base(options){ }
-
-        public static ApplicationDbContext Create(DbContextOptions<ApplicationDbContext> options)
-        {
-            return new ApplicationDbContext(options);
-        }
     }
 }

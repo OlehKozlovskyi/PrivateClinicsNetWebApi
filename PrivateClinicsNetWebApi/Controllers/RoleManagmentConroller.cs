@@ -15,7 +15,7 @@ namespace PrivateClinicsNetWebApi.Controllers
             _roleService = roleService;
         }
 
-        [HttpPost("role/create")]
+        [HttpPost("role-create")]
         public async Task<IActionResult> CreateRoleAsync([FromBody] RoleCreateDto model)
         {
             try
