@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using PrivateClinicsWebNet.Application.DTOs;
 using PrivateClinicsWebNet.Application.Exceptions;
 using PrivateClinicsWebNet.BusinessLogic.Repositories;
+using PrivateClinicsWebNet.DataAccess.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -11,78 +13,45 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PrivateClinicsWebNet.DataAccess
+namespace PrivateClinicsWebNet.Application.Services
 {
     public class AuthService
     {
         private readonly UserRepository _userRepository;
-        private readonly IConfiguration _configuration;
+        private readonly ITokenService _tokenService;
 
-        public AuthService(UserRepository userRepository, IConfiguration configuration)
+        public AuthService(UserRepository userRepository, ITokenService tokenService)
         {
             _userRepository = userRepository;
-            _configuration = configuration;
+            _tokenService = tokenService;
         }
 
-        public async Task<string> Login(string email, string password)
+        public async Task<string> Login(LoginDto loginDto)
         {
-           var user = await _userRepository.FindByEmailAsync(email);
+            var user = await _userRepository.FindByEmailAsync(loginDto.Email);
             if (user == null)
             {
                 throw new UserNotFoundException();
             }
-            var passwordValid = await _userRepository.CheckPasswordAsync(user, password);
+            var passwordValid = await _userRepository.CheckPasswordAsync(user, loginDto.Password);
             if (!passwordValid)
             {
                 throw new InvalidPasswordException();
             }
 
-            var token = GenerateJwt(user, email);
+            var token = _tokenService.GenerateJwt(user, loginDto.Email);
             return token;
         }
 
-        public async Task Register(string email, string password, string userRole)
+        public async Task Register(RegisterDto registerDto)
         {
-            var user = new IdentityUser { UserName = email, Email = email };
-            var result = await _userRepository.RegisterUser(user, password);
+            var user = new IdentityUser { UserName = registerDto.Email, Email = registerDto.Email };
+            var result = await _userRepository.RegisterUser(user, registerDto.Password);
             if (!result.Succeeded)
             {
                 throw new RegistrationFailedException();
             }
-            await _userRepository.AddToRoleAsync(user, userRole);
-        }
-
-        private string GenerateJwt(IdentityUser user, string email)
-        {
-            var token = GenerateEncryptedToken(GetClaimsAsync(user, email), GetSigningCredentials());
-            return token;
-        }
-
-        private string GenerateEncryptedToken(IEnumerable<Claim> claimsList, SigningCredentials signingCredentials)
-        {
-            var token = new JwtSecurityToken(
-                claims: claimsList,
-                expires: DateTime.UtcNow.AddDays(14),
-                signingCredentials: signingCredentials);
-            var tokenHandler = new JwtSecurityTokenHandler();
-            string encryptedToken = tokenHandler.WriteToken(token);
-            return encryptedToken;
-        }
-
-        private IEnumerable<Claim> GetClaimsAsync(IdentityUser user, string email)
-        {
-            var claims = new List<Claim>() 
-            {
-                new Claim(JwtRegisteredClaimNames.Sub, user.Id),
-                new Claim(JwtRegisteredClaimNames.Email, email)
-            };
-            return claims;
-        }
-
-        private SigningCredentials GetSigningCredentials()
-        {
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
-            return new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            await _userRepository.AddToRoleAsync(user, registerDto.UserRole);
         }
     }
 }

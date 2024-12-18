@@ -7,13 +7,13 @@ using System.Text;
 using System.Threading.Tasks;
 
 
-namespace PrivateClinicsWebNet.DataAccess.Services
+namespace PrivateClinicsWebNet.Application.Services
 {
     public class RoleService
     {
         private readonly RoleRepository _roleRepository;
 
-        public RoleService(RoleRepository roleRepository) 
+        public RoleService(RoleRepository roleRepository)
         {
             _roleRepository = roleRepository;
         }

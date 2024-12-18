@@ -6,8 +6,10 @@ using PrivateClinicsWebNet.BusinessLogic.Repositories;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.OpenApi.Models;
-using PrivateClinicsWebNet.DataAccess.Services;
 using System.Security.Cryptography.Xml;
+using PrivateClinicsWebNet.Application.Services;
+using PrivateClinicsWebNet.DataAccess.Services;
+using PrivateClinicsWebNet.DataAccess.Abstractions;
 
 namespace PrivateClinicsNetWebApi
 {
@@ -79,6 +81,7 @@ namespace PrivateClinicsNetWebApi
             _services.AddScoped<RoleRepository>();
             _services.AddScoped<AuthService>();
             _services.AddScoped<RoleService>();
+            _services.AddScoped<ITokenService, JwtTokenService>();
         }
 
         private void ConfigSwagger()
@@ -88,9 +91,9 @@ namespace PrivateClinicsNetWebApi
             {
                 options.SwaggerDoc("v1", new OpenApiInfo()
                 {
-                    Title = "API Documentation",
+                    Title = "Private clinics network WebApi",
                     Version = "v1",
-                    Description = "Документація для АРІ з автентифікацією JWT"
+                    Description = "Task 1.Implementation of User Authorization and Registration"
                 });
 
                 options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme

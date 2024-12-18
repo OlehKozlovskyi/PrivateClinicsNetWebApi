@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using PrivateClinicsWebNet.DataAccess;
 using PrivateClinicsWebNet.Application.DTOs;
+using PrivateClinicsWebNet.Application.Services;
 
 namespace PrivateClinicsNetWebApi.Controllers
 {
@@ -20,7 +20,7 @@ namespace PrivateClinicsNetWebApi.Controllers
         {
             try
             {
-                await _authService.Register(model.Email, model.Password, model.UserRole);
+                await _authService.Register(model);
                 return Ok("User registered successfully");
             }
             catch (Exception ex)
@@ -34,7 +34,7 @@ namespace PrivateClinicsNetWebApi.Controllers
         {
             try
             {
-                string token = await _authService.Login(model.Email, model.Password);
+                string token = await _authService.Login(model);
                 return Ok(new { Token = token});
             }
             catch(Exception ex)
