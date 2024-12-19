@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using PrivateClinicsWebNet.DataAccess;
@@ -11,9 +12,11 @@ using PrivateClinicsWebNet.DataAccess;
 namespace PrivateClinicsWebNet.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241219213935_Initial")]
+    partial class Initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,20 +54,20 @@ namespace PrivateClinicsWebNet.DataAccess.Migrations
                         new
                         {
                             Id = "1",
-                            Name = "Admin",
-                            NormalizedName = "ADMIN"
+                            Name = "admin",
+                            NormalizedName = "admin"
                         },
                         new
                         {
                             Id = "2",
-                            Name = "Doctor",
-                            NormalizedName = "DOCTOR"
+                            Name = "doctor",
+                            NormalizedName = "doctor"
                         },
                         new
                         {
                             Id = "3",
-                            Name = "Patient",
-                            NormalizedName = "PATIENT"
+                            Name = "admin",
+                            NormalizedName = "patient"
                         });
                 });
 

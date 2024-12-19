@@ -12,8 +12,8 @@ using PrivateClinicsWebNet.DataAccess;
 namespace PrivateClinicsWebNet.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241217195615_Init")]
-    partial class Init
+    [Migration("20241219214312_Initial2")]
+    partial class Initial2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
