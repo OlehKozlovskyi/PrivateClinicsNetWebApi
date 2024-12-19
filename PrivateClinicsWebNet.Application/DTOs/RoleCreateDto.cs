@@ -6,8 +6,5 @@ using System.Threading.Tasks;
 
 namespace PrivateClinicsWebNet.Application.DTOs;
 
-public record RoleCreateDto
-{
-    public string RoleName { get; set; }
-}
+public record RoleCreateDto(string RoleName);
 

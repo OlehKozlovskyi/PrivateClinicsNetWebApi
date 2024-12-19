@@ -6,9 +6,4 @@ using System.Threading.Tasks;
 
 namespace PrivateClinicsWebNet.Application.DTOs;
 
-public record RegisterDto
-{
-    public string Email { get; set; }
-    public string Password { get; set; }
-    public string UserRole { get; set; }
-}
+public record RegisterDto(string Email, string Password, string UserRole);
