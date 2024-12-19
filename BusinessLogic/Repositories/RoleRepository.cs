@@ -5,10 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using PrivateClinicsWebNet.BusinessLogic.Exceptions;
+using PrivateClinicsWebNet.BusinessLogic.Abstractions;
 
 namespace PrivateClinicsWebNet.BusinessLogic.Repositories;
 
-public class RoleRepository
+public class RoleRepository : IRoleRepository
 {
     private readonly RoleManager<IdentityRole> _roleManager;
 

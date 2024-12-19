@@ -1,4 +1,4 @@
-﻿using PrivateClinicsWebNet.BusinessLogic.Repositories;
+﻿using PrivateClinicsWebNet.BusinessLogic.Abstractions;
 using PrivateClinicsWebNet.Application.Exceptions;
 using System;
 using System.Collections.Generic;
@@ -11,9 +11,9 @@ namespace PrivateClinicsWebNet.Application.Services
 {
     public class RoleService
     {
-        private readonly RoleRepository _roleRepository;
+        private readonly IRoleRepository _roleRepository;
 
-        public RoleService(RoleRepository roleRepository)
+        public RoleService(IRoleRepository roleRepository)
         {
             _roleRepository = roleRepository;
         }

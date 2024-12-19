@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using PrivateClinicsWebNet.BusinessLogic.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace PrivateClinicsWebNet.BusinessLogic.Repositories
 {
-    public class UserRepository
+    public class UserRepository : IUserRepository
     {
         private readonly UserManager<IdentityUser> _userManager;
 
@@ -28,7 +29,7 @@ namespace PrivateClinicsWebNet.BusinessLogic.Repositories
 
         public async Task<IdentityUser> FindByEmailAsync(string email)
         {
-            return await _userManager.FindByEmailAsync(email);         
+            return await _userManager.FindByEmailAsync(email);
         }
 
         public async Task AddToRoleAsync(IdentityUser user, string role)

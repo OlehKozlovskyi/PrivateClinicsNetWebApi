@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using PrivateClinicsWebNet.Application.DTOs;
 using PrivateClinicsWebNet.Application.Exceptions;
+using PrivateClinicsWebNet.BusinessLogic.Abstractions;
 using PrivateClinicsWebNet.BusinessLogic.Repositories;
 using PrivateClinicsWebNet.DataAccess.Abstractions;
 using System;
@@ -17,10 +18,10 @@ namespace PrivateClinicsWebNet.Application.Services
 {
     public class AuthService
     {
-        private readonly UserRepository _userRepository;
+        private readonly IUserRepository _userRepository;
         private readonly ITokenService _tokenService;
 
-        public AuthService(UserRepository userRepository, ITokenService tokenService)
+        public AuthService(IUserRepository userRepository, ITokenService tokenService)
         {
             _userRepository = userRepository;
             _tokenService = tokenService;

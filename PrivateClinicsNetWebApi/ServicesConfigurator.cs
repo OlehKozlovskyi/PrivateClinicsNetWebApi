@@ -10,6 +10,7 @@ using System.Security.Cryptography.Xml;
 using PrivateClinicsWebNet.Application.Services;
 using PrivateClinicsWebNet.DataAccess.Services;
 using PrivateClinicsWebNet.DataAccess.Abstractions;
+using PrivateClinicsWebNet.BusinessLogic.Abstractions;
 
 namespace PrivateClinicsNetWebApi
 {
@@ -77,8 +78,8 @@ namespace PrivateClinicsNetWebApi
 
         private void ConfigCustomServices()
         {
-            _services.AddScoped<UserRepository>();
-            _services.AddScoped<RoleRepository>();
+            _services.AddScoped<IUserRepository, UserRepository>();
+            _services.AddScoped<IRoleRepository, RoleRepository>();
             _services.AddScoped<AuthService>();
             _services.AddScoped<RoleService>();
             _services.AddScoped<ITokenService, JwtTokenService>();
