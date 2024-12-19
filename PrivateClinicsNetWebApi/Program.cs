@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using PrivateClinicsWebNet.DataAccess.Middlewares;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -28,6 +29,7 @@ namespace PrivateClinicsNetWebApi
             configurator.ConfigureServices();
             _builder.Services.AddControllers();
             var app = _builder.Build();
+            app.UseMiddleware<ExceptionHandlingMiddleware>();
             if (app.Environment.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

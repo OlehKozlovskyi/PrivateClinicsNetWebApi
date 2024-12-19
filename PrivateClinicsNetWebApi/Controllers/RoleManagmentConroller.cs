@@ -19,15 +19,8 @@ namespace PrivateClinicsNetWebApi.Controllers
         [HttpPost("role-create")]
         public async Task<IActionResult> CreateRoleAsync([FromBody] RoleCreateDto model)
         {
-            try
-            {
-                await _roleService.CreateRoleAsync(model.RoleName);
-                return Ok("Role created successfully");
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            await _roleService.CreateRoleAsync(model.RoleName);
+            return Ok("Role created successfully");
         }
     }
 }

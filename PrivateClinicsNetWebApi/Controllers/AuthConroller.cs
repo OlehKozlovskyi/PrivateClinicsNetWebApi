@@ -18,29 +18,15 @@ namespace PrivateClinicsNetWebApi.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDto model)
         {
-            try
-            {
-                await _authService.Register(model);
-                return Ok("User registered successfully");
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            await _authService.Register(model);
+            return Ok("User registered successfully");
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto model)
         {
-            try
-            {
-                string token = await _authService.Login(model);
-                return Ok(new { Token = token});
-            }
-            catch(Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            string token = await _authService.Login(model);
+            return Ok(new { Token = token});
         }
     }
 }
