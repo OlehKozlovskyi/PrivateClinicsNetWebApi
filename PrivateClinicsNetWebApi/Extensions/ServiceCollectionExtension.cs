@@ -20,11 +20,10 @@ namespace PrivateClinicsNetWebApi.Extensions
 {
     public static class ServiceCollectionExtension
     {
-        public static IServiceCollection AddPostgresDb(this IServiceCollection services, 
-            string connectionString)
+        public static IServiceCollection AddPostgresDb(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseNpgsql(connectionString));
+                options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
             return services;
         }
 
@@ -36,7 +35,7 @@ namespace PrivateClinicsNetWebApi.Extensions
             return services;
         }
 
-        public static IServiceCollection AddAuthorization(this IServiceCollection services)
+        public static IServiceCollection AddUserAuthorization(this IServiceCollection services)
         {
             services.AddIdentity<IdentityUser, IdentityRole>(options =>
             {
@@ -51,7 +50,7 @@ namespace PrivateClinicsNetWebApi.Extensions
             return services;
         }
 
-        public static IServiceCollection AddAuthentication(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddUserAuthentication(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddAuthentication(options =>
             {
