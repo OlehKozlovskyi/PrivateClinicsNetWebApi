@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using PrivateClinicsWebNet.BusinessLogic.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,11 +18,7 @@ namespace PrivateClinicsWebNet.DataAccess
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            builder.Entity<IdentityRole>().HasData(
-                new IdentityRole { Id = "1", Name = "Admin", NormalizedName = "ADMIN" },
-                new IdentityRole { Id = "2", Name = "Doctor", NormalizedName = "DOCTOR" },
-                new IdentityRole { Id = "3", Name = "Patient", NormalizedName = "PATIENT" }
-                );
+            builder.Entity<IdentityRole>().HasData(RoleRegistry.Admin, RoleRegistry.Doctor, RoleRegistry.Patient);
         }
     }
 }
