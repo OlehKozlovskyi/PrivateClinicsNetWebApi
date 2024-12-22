@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using AutoMapper.Configuration;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using PrivateClinicsWebNet.DataAccess.Abstractions;
+using PrivateClinicsWebNet.DataAccess.Entities;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -14,11 +17,11 @@ namespace PrivateClinicsWebNet.DataAccess.Services
 {
     public class JwtTokenService : ITokenService
     {
-        private readonly IConfiguration _configuration;
+        private readonly JwtSecurityTokenSettings _configuration;
 
-        public JwtTokenService(IConfiguration configuration)
+        public JwtTokenService(IOptions<JwtSecurityTokenSettings> settings)
         {
-            _configuration = configuration;
+            _configuration = settings.Value;
         }
 
         public string GenerateJwt(IdentityUser user, string email)
@@ -29,9 +32,10 @@ namespace PrivateClinicsWebNet.DataAccess.Services
 
         private string GenerateEncryptedToken(IEnumerable<Claim> claimsList, SigningCredentials signingCredentials)
         {
+            double jwtExpirationDays = Convert.ToDouble(_configuration.ExpirationDays);
             var token = new JwtSecurityToken(
                 claims: claimsList,
-                expires: DateTime.UtcNow.AddDays(14),
+                expires: DateTime.UtcNow.AddDays(jwtExpirationDays),
                 signingCredentials: signingCredentials);
             var tokenHandler = new JwtSecurityTokenHandler();
             string encryptedToken = tokenHandler.WriteToken(token);
@@ -50,7 +54,7 @@ namespace PrivateClinicsWebNet.DataAccess.Services
 
         private SigningCredentials GetSigningCredentials()
         {
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.Key));
             return new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
         }
     }

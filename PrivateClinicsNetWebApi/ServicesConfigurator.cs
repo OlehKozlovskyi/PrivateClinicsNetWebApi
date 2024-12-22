@@ -11,6 +11,8 @@ using PrivateClinicsWebNet.Application.Services;
 using PrivateClinicsWebNet.DataAccess.Services;
 using PrivateClinicsWebNet.DataAccess.Abstractions;
 using PrivateClinicsWebNet.BusinessLogic.Abstractions;
+using PrivateClinicsWebNet.DataAccess.Entities;
+using Microsoft.Extensions.Options;
 
 namespace PrivateClinicsNetWebApi
 {
@@ -27,6 +29,7 @@ namespace PrivateClinicsNetWebApi
 
         public void ConfigureServices()
         {
+            ConfigJwtTokenSettings();
             ConfigPostgresDatabase();
             ConfigAuthorization();
             ConfigAuthentication();
@@ -38,6 +41,12 @@ namespace PrivateClinicsNetWebApi
         {
             _services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseNpgsql(_configuration.GetConnectionString("DefaultConnection")));
+        }
+
+        private void ConfigJwtTokenSettings()
+        {
+            _services.Configure<JwtSecurityTokenSettings>(
+                _configuration.GetSection("JwtSecurityTokenSettings"));
         }
 
         private void ConfigAuthorization()
@@ -69,9 +78,9 @@ namespace PrivateClinicsNetWebApi
                         ValidateAudience = true,
                         ValidateLifetime = true,
                         ValidateIssuerSigningKey = true,
-                        ValidIssuer = _configuration["Jwt:Issuer"],
-                        ValidAudience = _configuration["Jwt:Audience"],
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]))
+                        ValidIssuer = _configuration["JwtSecurityTokenSettings:Issuer"],
+                        ValidAudience = _configuration["JwtSecurityTokenSettings:Audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSecurityTokenSettings:Key"]))
                     };
                 });
         }
