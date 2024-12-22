@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using PrivateClinicsWebNet.Application.DTOs;
@@ -20,11 +21,13 @@ namespace PrivateClinicsWebNet.Application.Services
     {
         private readonly IUserRepository _userRepository;
         private readonly ITokenService _tokenService;
+        private readonly IMapper _mapper;
 
-        public AuthService(IUserRepository userRepository, ITokenService tokenService)
+        public AuthService(IUserRepository userRepository, ITokenService tokenService, IMapper mapper)
         {
             _userRepository = userRepository;
             _tokenService = tokenService;
+            _mapper = mapper;
         }
 
         public async Task<string> Login(LoginDto loginDto)
@@ -46,7 +49,7 @@ namespace PrivateClinicsWebNet.Application.Services
 
         public async Task Register(RegisterDto registerDto)
         {
-            var user = new IdentityUser { UserName = registerDto.Email, Email = registerDto.Email };
+            var user = _mapper.Map<IdentityUser>(registerDto);
             var result = await _userRepository.RegisterUser(user, registerDto.Password);
             if (!result.Succeeded)
             {

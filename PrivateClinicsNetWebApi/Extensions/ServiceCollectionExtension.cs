@@ -1,59 +1,44 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.EntityFrameworkCore;
-using PrivateClinicsWebNet.DataAccess;
-using PrivateClinicsWebNet.BusinessLogic.Repositories;
-using System.Text;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using System.Security.Cryptography.Xml;
 using PrivateClinicsWebNet.Application.Services;
-using PrivateClinicsWebNet.DataAccess.Services;
-using PrivateClinicsWebNet.DataAccess.Abstractions;
 using PrivateClinicsWebNet.BusinessLogic.Abstractions;
+using PrivateClinicsWebNet.BusinessLogic.Repositories;
+using PrivateClinicsWebNet.DataAccess;
+using PrivateClinicsWebNet.DataAccess.Abstractions;
 using PrivateClinicsWebNet.DataAccess.Entities;
-using Microsoft.Extensions.Options;
-using PrivateClinicsWebNet.Application.Mapping;
+using PrivateClinicsWebNet.DataAccess.Services;
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Text;
 
-namespace PrivateClinicsNetWebApi
+namespace PrivateClinicsNetWebApi.Extensions
 {
-    public class ServicesConfigurator
+    public static class ServiceCollectionExtension
     {
-        private readonly IServiceCollection _services;
-        private readonly IConfiguration _configuration;
-
-        public ServicesConfigurator(WebApplicationBuilder builder)
+        public static IServiceCollection AddPostgresDb(this IServiceCollection services, 
+            string connectionString)
         {
-            _configuration = builder.Configuration;
-            _services = builder.Services;
+            services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseNpgsql(connectionString));
+            return services;
         }
 
-        public void ConfigureServices()
+        public static IServiceCollection AddJwtTokenSettings(this IServiceCollection services,
+            string sectionName, IConfiguration configuration)
         {
-            ConfigJwtTokenSettings();
-            ConfigPostgresDatabase();
-            ConfigAuthorization();
-            ConfigAuthentication();
-            ConfigCustomServices();
-            ConfigMappers();
-            ConfigSwagger();
+            services.Configure<JwtSecurityTokenSettings>(
+                configuration.GetSection(sectionName));
+            return services;
         }
 
-        private void ConfigPostgresDatabase()
+        public static IServiceCollection AddAuthorization(this IServiceCollection services)
         {
-            _services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseNpgsql(_configuration.GetConnectionString("DefaultConnection")));
-        }
-
-        private void ConfigJwtTokenSettings()
-        {
-            _services.Configure<JwtSecurityTokenSettings>(
-                _configuration.GetSection("JwtSecurityTokenSettings"));
-        }
-
-        private void ConfigAuthorization()
-        {
-            _services.AddIdentity<IdentityUser, IdentityRole>(options =>
+            services.AddIdentity<IdentityUser, IdentityRole>(options =>
             {
                 options.Password.RequireDigit = false;
                 options.Password.RequireLowercase = false;
@@ -63,11 +48,12 @@ namespace PrivateClinicsNetWebApi
             })
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
+            return services;
         }
 
-        private void ConfigAuthentication()
+        public static IServiceCollection AddAuthentication(this IServiceCollection services, IConfiguration configuration)
         {
-            _services.AddAuthentication(options =>
+            services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -80,31 +66,33 @@ namespace PrivateClinicsNetWebApi
                         ValidateAudience = true,
                         ValidateLifetime = true,
                         ValidateIssuerSigningKey = true,
-                        ValidIssuer = _configuration["JwtSecurityTokenSettings:Issuer"],
-                        ValidAudience = _configuration["JwtSecurityTokenSettings:Audience"],
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSecurityTokenSettings:Key"]))
+                        ValidIssuer = configuration["JwtSecurityTokenSettings:Issuer"],
+                        ValidAudience = configuration["JwtSecurityTokenSettings:Audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtSecurityTokenSettings:Key"]))
                     };
                 });
+            return services;
         }
 
-        private void ConfigMappers()
+        public static IServiceCollection AddMappers(this IServiceCollection services)
         {
-            _services.AddAutoMapper(typeof(UserRegistrationProfileMap));
+            return services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         }
 
-        private void ConfigCustomServices()
+        public static IServiceCollection AddCustomServices(this IServiceCollection services)
         {
-            _services.AddScoped<IUserRepository, UserRepository>();
-            _services.AddScoped<IRoleRepository, RoleRepository>();
-            _services.AddScoped<AuthService>();
-            _services.AddScoped<RoleService>();
-            _services.AddScoped<ITokenService, JwtTokenService>();
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IRoleRepository, RoleRepository>();
+            services.AddScoped<AuthService>();
+            services.AddScoped<RoleService>();
+            services.AddScoped<ITokenService, JwtTokenService>();
+            return services;
         }
 
-        private void ConfigSwagger()
+        public static IServiceCollection AddSwagger(this IServiceCollection services)
         {
-            _services.AddEndpointsApiExplorer();
-            _services.AddSwaggerGen(options =>
+            services.AddEndpointsApiExplorer();
+            services.AddSwaggerGen(options =>
             {
                 options.SwaggerDoc("v1", new OpenApiInfo()
                 {
@@ -138,6 +126,7 @@ namespace PrivateClinicsNetWebApi
                     }
                 });
             });
+            return services;
         }
     }
 }
