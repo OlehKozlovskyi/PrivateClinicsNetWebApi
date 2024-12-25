@@ -34,7 +34,7 @@ namespace PrivateClinicsWebNet.Application.Services
         public async Task<string> Login(LoginDto loginDto)
         {
             var user = await _userRepository.FindByEmailAsync(loginDto.Email);
-            if (user == null)
+            if (user.UserName != loginDto.Email)
             {
                 throw new UserNotFoundException();
             }
