@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrivateClinicsWebNet.Busine
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrivateClinicsWebNet.Application", "PrivateClinicsWebNet.Application\PrivateClinicsWebNet.Application.csproj", "{427D99B4-581F-48AF-ABBA-8D015AD1B100}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrivateClinicsWebNet.Application.Tests", "PrivateClinicsWebNet.Application.Tests\PrivateClinicsWebNet.Application.Tests.csproj", "{BEB9A50F-BD6E-4D83-80D5-B5387617F8C9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{427D99B4-581F-48AF-ABBA-8D015AD1B100}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{427D99B4-581F-48AF-ABBA-8D015AD1B100}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{427D99B4-581F-48AF-ABBA-8D015AD1B100}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BEB9A50F-BD6E-4D83-80D5-B5387617F8C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BEB9A50F-BD6E-4D83-80D5-B5387617F8C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BEB9A50F-BD6E-4D83-80D5-B5387617F8C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BEB9A50F-BD6E-4D83-80D5-B5387617F8C9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
