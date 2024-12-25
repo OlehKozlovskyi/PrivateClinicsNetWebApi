@@ -1,54 +1,57 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using PrivateClinicsWebNet.DataAccess.Middlewares;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using PrivateClinicsWebNet.DataAccess;
+using System.Configuration;
+using System.Text;
+using PrivateClinicsNetWebApi.Extensions;
 
 namespace PrivateClinicsNetWebApi
 {
     public class Program
     {
+        private WebApplicationBuilder _builder;
+        private IServiceCollection _services;
+        private IConfiguration _configuration;
+
         public static void Main(string[] args)
         {
-            var builder = WebApplication.CreateBuilder(args);
+            var program = new Program();
 
-            // Add services to the container.
-            builder.Services.AddAuthorization();
+            program.Run(args);
+        }
 
-            // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-            builder.Services.AddOpenApi();
-            
-            //Add service Swagger
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
-            var app = builder.Build();
-
+        private void Run(string[] args)
+        {
+            _builder = WebApplication.CreateBuilder(args);
+            _configuration = _builder.Configuration;
+            _services = _builder.Services;
+            _services.AddJwtTokenSettings("JwtSecurityTokenSettings", _configuration);
+            _services.AddPostgresDb(_configuration);
+            _services.AddUserAuthorization();
+            _services.AddUserAuthentication(_configuration);
+            _services.AddCustomServices();
+            _services.AddMappers();
+            _services.AddSwagger();
+            _builder.Services.AddControllers();
+            var app = _builder.Build();
+            app.UseMiddleware<ExceptionHandlingMiddleware>();
             if (app.Environment.IsDevelopment())
             {
+                app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c =>
+                app.UseSwaggerUI(options =>
                 {
-                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "MyApi v1");
-                    c.RoutePrefix = string.Empty;
+                    options.SwaggerEndpoint("/swagger/v1/swagger.json", "API Documentation v1");
+                    options.RoutePrefix = string.Empty;
                 });
             }
-
             app.UseHttpsRedirection();
+            app.UseAuthentication();
             app.UseAuthorization();
-
-            var summaries = new[]
-            {
-                "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-            };
-
-            app.MapGet("/weatherforecast", (HttpContext httpContext) =>
-            {
-                var forecast = Enumerable.Range(1, 5).Select(index =>
-                    new WeatherForecast
-                    {
-                        Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                        TemperatureC = Random.Shared.Next(-20, 55),
-                        Summary = summaries[Random.Shared.Next(summaries.Length)]
-                    })
-                    .ToArray();
-                return forecast;
-            })
-            .WithName("GetWeatherForecast");
+            app.MapControllers();
             app.Run();
         }
     }
