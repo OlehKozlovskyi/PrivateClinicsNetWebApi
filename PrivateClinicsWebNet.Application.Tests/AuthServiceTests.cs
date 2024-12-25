@@ -30,6 +30,18 @@ public class AuthServiceTests
         _authService = new AuthService(_mockUserRepository.Object, _mockTokenService.Object, _mapper);
     }
 
+    #region Login tests
+    [Theory]
+    [InlineData(null, "password")]
+    [InlineData("example@gmail.com", null)]
+    [InlineData(null, null)]
+    public async Task Login_ShouldThrowNullReferanceException_WhenInputsAreInvalid(string email, string password)
+    {
+        var loginDto = new LoginDto(email, password);
+        var act = async () => await _authService.Login(loginDto);
+        await act.Should().ThrowAsync<NullReferenceException>();
+    }
+
     [Fact]
     public async Task Login_ShouldReturnToken_WhenUserIsAuthorized()
     {
@@ -76,15 +88,25 @@ public class AuthServiceTests
         var act = async () => await _authService.Login(loginDto);
         await act.Should().ThrowAsync<InvalidPasswordException>();
     }
+    #endregion
 
+    #region Registration tests
     [Theory]
-    [InlineData(null,"password")]
-    [InlineData("example@gmail.com", null)]
-    [InlineData(null,null)]
-    public async Task Login_ShouldThrowArgumentException_WhenInputsAreInvalid(string email, string password)
+    [InlineData(null,null,null)]
+    [InlineData(null, "password", "Patient")]
+    [InlineData("example@gmail.com", null, "Patient")]
+    [InlineData("example@gmail.com", "password", null)]
+    public async Task Register_ShouldThrowNullReferanceException_WhenIncomingDataInvalid(string email, string password, string role)
     {
-        var loginDto = new LoginDto(email, password);
-        var act = async () => await _authService.Login(loginDto);
+        var registerDto = new RegisterDto(email, password, role);
+        var act = async()=>await _authService.Register(registerDto);
         await act.Should().ThrowAsync<NullReferenceException>();
     }
+
+    [Fact]
+    public async Task Register_ShouldThrowInvalidUserRoleException_WhenUserRoleUnsupported()
+    {
+
+    }
+    #endregion
 }

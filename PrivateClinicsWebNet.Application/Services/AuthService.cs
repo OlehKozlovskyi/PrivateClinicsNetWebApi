@@ -6,6 +6,7 @@ using PrivateClinicsWebNet.Application.Abstractions;
 using PrivateClinicsWebNet.Application.DTOs;
 using PrivateClinicsWebNet.Application.Exceptions;
 using PrivateClinicsWebNet.BusinessLogic.Abstractions;
+using PrivateClinicsWebNet.BusinessLogic.Entities;
 using PrivateClinicsWebNet.BusinessLogic.Repositories;
 using PrivateClinicsWebNet.DataAccess.Abstractions;
 using System;
@@ -52,9 +53,14 @@ namespace PrivateClinicsWebNet.Application.Services
         {
             var user = _mapper.Map<IdentityUser>(registerDto);
             var result = await _userRepository.RegisterUser(user, registerDto.Password);
+            var supportedRoles = RoleRegistry.GetRoles();
             if (!result.Succeeded)
             {
                 throw new RegistrationFailedException();
+            }
+            if (supportedRoles.Select(x => x.Name == registerDto.UserRole).Any())
+            {
+                throw new InvalidUserRoleException();
             }
             await _userRepository.AddToRoleAsync(user, registerDto.UserRole);
         }
