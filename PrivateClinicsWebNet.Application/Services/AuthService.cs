@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using PrivateClinicsWebNet.Application.Abstractions;
 using PrivateClinicsWebNet.Application.DTOs;
 using PrivateClinicsWebNet.Application.Exceptions;
 using PrivateClinicsWebNet.BusinessLogic.Abstractions;
@@ -17,7 +18,7 @@ using System.Threading.Tasks;
 
 namespace PrivateClinicsWebNet.Application.Services
 {
-    public class AuthService
+    public class AuthService : IAuthService
     {
         private readonly IUserRepository _userRepository;
         private readonly ITokenService _tokenService;

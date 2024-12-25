@@ -5,11 +5,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PrivateClinicsWebNet.Application.Abstractions;
 
 
 namespace PrivateClinicsWebNet.Application.Services
 {
-    public class RoleService
+    public class RoleService : IRoleService
     {
         private readonly IRoleRepository _roleRepository;
 

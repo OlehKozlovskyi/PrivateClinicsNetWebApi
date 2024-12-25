@@ -12,6 +12,7 @@ using PrivateClinicsWebNet.DataAccess;
 using PrivateClinicsWebNet.DataAccess.Abstractions;
 using PrivateClinicsWebNet.DataAccess.Entities;
 using PrivateClinicsWebNet.DataAccess.Services;
+using PrivateClinicsWebNet.Application.Abstractions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -82,8 +83,8 @@ namespace PrivateClinicsNetWebApi.Extensions
         {
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IRoleRepository, RoleRepository>();
-            services.AddScoped<AuthService>();
-            services.AddScoped<RoleService>();
+            services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<ITokenService, JwtTokenService>();
             return services;
         }
