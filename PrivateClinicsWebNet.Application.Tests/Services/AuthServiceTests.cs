@@ -1,5 +1,4 @@
-﻿using PrivateClinicsWebNet.Application;
-using PrivateClinicsWebNet.Application.Services;
+﻿using PrivateClinicsWebNet.Application.Services;
 using PrivateClinicsWebNet.Application.Abstractions;
 using PrivateClinicsWebNet.BusinessLogic.Repositories;
 using Moq;
@@ -12,8 +11,9 @@ using Microsoft.AspNetCore.Identity;
 using PrivateClinicsWebNet.Application.DTOs;
 using FluentAssertions;
 using PrivateClinicsWebNet.Application.Exceptions;
+using PrivateClinicsWebNet.Application.Tests.TestData;
 
-namespace PrivateClinicsWebNet.Application.Tests;
+namespace PrivateClinicsWebNet.Application.Tests.Services;
 
 public class AuthServiceTests
 {
@@ -22,7 +22,7 @@ public class AuthServiceTests
     private readonly AuthService _authService;
     private readonly Mapper _mapper;
 
-    public AuthServiceTests() 
+    public AuthServiceTests()
     {
         _mapper = new Mapper(new MapperConfiguration(config => config.AddProfile<UserRegistrationProfileMap>()));
         _mockUserRepository = new Mock<IUserRepository>();
@@ -46,7 +46,7 @@ public class AuthServiceTests
     public async Task Login_ShouldReturnToken_WhenUserIsAuthorized()
     {
         var loginDto = new LoginDto("user@gmail.com", "12");
-        var user = new IdentityUser { UserName = "user@gmail.com", PasswordHash ="12" };
+        var user = new IdentityUser { UserName = "user@gmail.com", PasswordHash = "12" };
         var expectedToken = "mock_token";
         _mockUserRepository
             .Setup(repository => repository.FindByEmailAsync(loginDto.Email))
@@ -70,7 +70,7 @@ public class AuthServiceTests
         _mockUserRepository
             .Setup(repository => repository.FindByEmailAsync(loginDto.Email))
             .ReturnsAsync(user);
-        var act = async()=>await _authService.Login(loginDto);
+        var act = async () => await _authService.Login(loginDto);
         await act.Should().ThrowAsync<UserNotFoundException>();
     }
 
@@ -92,21 +92,37 @@ public class AuthServiceTests
 
     #region Registration tests
     [Theory]
-    [InlineData(null,null,null)]
+    [InlineData(null, null, null)]
     [InlineData(null, "password", "Patient")]
     [InlineData("example@gmail.com", null, "Patient")]
     [InlineData("example@gmail.com", "password", null)]
     public async Task Register_ShouldThrowNullReferanceException_WhenIncomingDataInvalid(string email, string password, string role)
     {
         var registerDto = new RegisterDto(email, password, role);
-        var act = async()=>await _authService.Register(registerDto);
+        var act = async () => await _authService.Register(registerDto);
         await act.Should().ThrowAsync<NullReferenceException>();
     }
 
     [Fact]
     public async Task Register_ShouldThrowInvalidUserRoleException_WhenUserRoleUnsupported()
     {
+        var registerDto = new RegisterDto("example@gmail.com", "Password", "Manager");
+        _mockUserRepository
+            .Setup(repository => repository.RegisterUser(It.IsAny<IdentityUser>(), registerDto.Password))
+            .ReturnsAsync(IdentityResult.Success);
+        var act = async () => await _authService.Register(registerDto);
+        await act.Should().ThrowAsync<InvalidUserRoleException>();
+    }
 
+    [Theory]
+    [ClassData(typeof(UserTestData))]
+    public async Task Register_ShouldRegisterNewUser_WhenIncomigDataCorrect(RegisterDto registerDto)
+    {
+        _mockUserRepository
+            .Setup(repository => repository.RegisterUser(It.IsAny<IdentityUser>(), registerDto.Password))
+            .ReturnsAsync(IdentityResult.Success);
+        var act = async () => await _authService.Register(registerDto);
+        await act.Should().NotThrowAsync();
     }
     #endregion
 }

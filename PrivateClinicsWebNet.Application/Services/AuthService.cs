@@ -58,9 +58,9 @@ namespace PrivateClinicsWebNet.Application.Services
             {
                 throw new RegistrationFailedException();
             }
-            if (supportedRoles.Select(x => x.Name == registerDto.UserRole).Any())
+            if (!supportedRoles.Any(x => x.Name == registerDto.UserRole))
             {
-                throw new InvalidUserRoleException();
+                throw new InvalidUserRoleException(registerDto.UserRole);
             }
             await _userRepository.AddToRoleAsync(user, registerDto.UserRole);
         }
