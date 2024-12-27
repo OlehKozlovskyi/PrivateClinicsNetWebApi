@@ -7,6 +7,7 @@ using PrivateClinicsWebNet.DataAccess;
 using System.Configuration;
 using System.Text;
 using PrivateClinicsNetWebApi.Extensions;
+using PrivateClinicsWebNet.BusinessLogic.Entities;
 
 namespace PrivateClinicsNetWebApi
 {
