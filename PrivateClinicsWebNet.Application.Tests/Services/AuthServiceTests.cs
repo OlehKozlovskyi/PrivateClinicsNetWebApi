@@ -35,7 +35,7 @@ public class AuthServiceTests
     [InlineData(null, "password")]
     [InlineData("example@gmail.com", null)]
     [InlineData(null, null)]
-    public async Task Login_ShouldThrowNullReferanceException_WhenInputsAreInvalid(string email, string password)
+    public async Task Login_ShouldThrowNullReferenceException_WhenInputsAreInvalid(string email, string password)
     {
         var loginDto = new LoginDto(email, password);
         var act = async () => await _authService.Login(loginDto);
@@ -58,12 +58,11 @@ public class AuthServiceTests
             .Setup(service => service.GenerateJwt(user, loginDto.Email))
             .Returns(expectedToken);
         var result = await _authService.Login(loginDto);
-        result.Should().NotBeNullOrEmpty();
         result.Should().BeSameAs(expectedToken);
     }
 
     [Fact]
-    public async Task Login_ShouldThrowUserNotFoundException_WhenUserNotFoundOrEmailIsWrong()
+    public async Task Login_ShouldThrowUserNotFoundException_WhenEmailIsWrong()
     {
         var loginDto = new LoginDto("user@gmail.com", "1");
         var user = new IdentityUser { UserName = "admin@gmail.com", PasswordHash = "2" };
@@ -71,6 +70,18 @@ public class AuthServiceTests
             .Setup(repository => repository.FindByEmailAsync(loginDto.Email))
             .ReturnsAsync(user);
         var act = async () => await _authService.Login(loginDto);
+        await act.Should().ThrowAsync<UserNotFoundException>();
+    }
+
+    [Fact]
+    public async Task Login_ShouldThrowUserNotFoundException_WhenUserNotFound()
+    {
+        var loginDto = new LoginDto("user@gmail.com", "password");
+        IdentityUser user = new IdentityUser {UserName ="user123@gmail.com", PasswordHash = "password" };
+        _mockUserRepository
+            .Setup(repository => repository.FindByEmailAsync(loginDto.Email))
+            .ReturnsAsync(user);
+        var act = async()=>await _authService.Login(loginDto);
         await act.Should().ThrowAsync<UserNotFoundException>();
     }
 
@@ -96,7 +107,7 @@ public class AuthServiceTests
     [InlineData(null, "password", "Patient")]
     [InlineData("example@gmail.com", null, "Patient")]
     [InlineData("example@gmail.com", "password", null)]
-    public async Task Register_ShouldThrowNullReferanceException_WhenIncomingDataInvalid(string email, string password, string role)
+    public async Task Register_ShouldThrowNullReferenceException_WhenIncomingDataInvalid(string email, string password, string role)
     {
         var registerDto = new RegisterDto(email, password, role);
         var act = async () => await _authService.Register(registerDto);
