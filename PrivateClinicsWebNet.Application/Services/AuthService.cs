@@ -7,6 +7,7 @@ using PrivateClinicsWebNet.Application.DTOs;
 using PrivateClinicsWebNet.Application.Exceptions;
 using PrivateClinicsWebNet.BusinessLogic.Abstractions;
 using PrivateClinicsWebNet.BusinessLogic.Entities;
+using PrivateClinicsWebNet.BusinessLogic.Factories;
 using PrivateClinicsWebNet.BusinessLogic.Repositories;
 using PrivateClinicsWebNet.DataAccess.Abstractions;
 using System;
@@ -23,13 +24,13 @@ namespace PrivateClinicsWebNet.Application.Services
     {
         private readonly IUserRepository _userRepository;
         private readonly ITokenService _tokenService;
-        private readonly IMapper _mapper;
+        private readonly UserFactory _userFactory;
 
-        public AuthService(IUserRepository userRepository, ITokenService tokenService, IMapper mapper)
+        public AuthService(IUserRepository userRepository, ITokenService tokenService, UserFactory userFactory)
         {
             _userRepository = userRepository;
             _tokenService = tokenService;
-            _mapper = mapper;
+            _userFactory = userFactory;
         }
 
         public async Task<string> Login(LoginDto loginDto)
@@ -51,16 +52,11 @@ namespace PrivateClinicsWebNet.Application.Services
 
         public async Task Register(RegisterDto registerDto)
         {
-            var user = _mapper.Map<IdentityUser>(registerDto);
+            var user = _userFactory.GetUser(registerDto.Email, registerDto.UserRole);
             var result = await _userRepository.RegisterUser(user, registerDto.Password);
-            var supportedRoles = RoleRegistry.GetRoles();
             if (!result.Succeeded)
             {
                 throw new RegistrationFailedException();
-            }
-            if (!supportedRoles.Any(x => x.Name == registerDto.UserRole))
-            {
-                throw new InvalidUserRoleException(registerDto.UserRole);
             }
             await _userRepository.AddToRoleAsync(user, registerDto.UserRole);
         }

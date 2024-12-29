@@ -12,6 +12,8 @@ using PrivateClinicsWebNet.Application.DTOs;
 using FluentAssertions;
 using PrivateClinicsWebNet.Application.Exceptions;
 using PrivateClinicsWebNet.Application.Tests.TestData;
+using PrivateClinicsWebNet.BusinessLogic.Factories;
+using PrivateClinicsWebNet.BusinessLogic.Exceptions;
 
 namespace PrivateClinicsWebNet.Application.Tests.Services;
 
@@ -20,14 +22,14 @@ public class AuthServiceTests
     private readonly Mock<IUserRepository> _mockUserRepository;
     private readonly Mock<ITokenService> _mockTokenService;
     private readonly AuthService _authService;
-    private readonly Mapper _mapper;
+    private readonly UserFactory _userFactory;
 
     public AuthServiceTests()
     {
-        _mapper = new Mapper(new MapperConfiguration(config => config.AddProfile<UserRegistrationProfileMap>()));
         _mockUserRepository = new Mock<IUserRepository>();
         _mockTokenService = new Mock<ITokenService>();
-        _authService = new AuthService(_mockUserRepository.Object, _mockTokenService.Object, _mapper);
+        _userFactory = new UserFactory();
+        _authService = new AuthService(_mockUserRepository.Object, _mockTokenService.Object, _userFactory);
     }
 
     #region Login tests

@@ -16,6 +16,7 @@ using PrivateClinicsWebNet.Application.Abstractions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
+using PrivateClinicsWebNet.BusinessLogic.Factories;
 
 namespace PrivateClinicsNetWebApi.Extensions
 {
@@ -86,6 +87,7 @@ namespace PrivateClinicsNetWebApi.Extensions
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<ITokenService, JwtTokenService>();
+            services.AddScoped<UserFactory>();
             return services;
         }
 

@@ -1,4 +1,4 @@
-﻿namespace PrivateClinicsWebNet.Application.Exceptions
+﻿namespace PrivateClinicsWebNet.BusinessLogic.Exceptions
 {
     [Serializable]
     public class InvalidUserRoleException : Exception
