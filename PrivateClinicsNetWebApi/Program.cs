@@ -1,13 +1,5 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using PrivateClinicsWebNet.DataAccess.Middlewares;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using PrivateClinicsWebNet.DataAccess;
-using System.Configuration;
-using System.Text;
 using PrivateClinicsNetWebApi.Extensions;
-using PrivateClinicsWebNet.BusinessLogic.Entities;
 
 namespace PrivateClinicsNetWebApi
 {

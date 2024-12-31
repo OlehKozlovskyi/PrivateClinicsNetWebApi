@@ -1,12 +1,7 @@
 ﻿using PrivateClinicsWebNet.Application.Services;
-using PrivateClinicsWebNet.Application.Abstractions;
-using PrivateClinicsWebNet.BusinessLogic.Repositories;
 using Moq;
 using PrivateClinicsWebNet.BusinessLogic.Abstractions;
 using PrivateClinicsWebNet.DataAccess.Abstractions;
-using PrivateClinicsWebNet.DataAccess.Services;
-using AutoMapper;
-using PrivateClinicsWebNet.Application.Mapping;
 using Microsoft.AspNetCore.Identity;
 using PrivateClinicsWebNet.Application.DTOs;
 using FluentAssertions;

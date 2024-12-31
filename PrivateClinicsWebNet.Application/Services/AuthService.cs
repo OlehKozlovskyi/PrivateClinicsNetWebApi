@@ -1,22 +1,8 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using PrivateClinicsWebNet.Application.Abstractions;
+﻿using PrivateClinicsWebNet.Application.Abstractions;
 using PrivateClinicsWebNet.Application.DTOs;
 using PrivateClinicsWebNet.Application.Exceptions;
 using PrivateClinicsWebNet.BusinessLogic.Abstractions;
-using PrivateClinicsWebNet.BusinessLogic.Entities;
-using PrivateClinicsWebNet.BusinessLogic.Factories;
-using PrivateClinicsWebNet.BusinessLogic.Repositories;
 using PrivateClinicsWebNet.DataAccess.Abstractions;
-using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PrivateClinicsWebNet.Application.Services
 {
@@ -24,9 +10,9 @@ namespace PrivateClinicsWebNet.Application.Services
     {
         private readonly IUserRepository _userRepository;
         private readonly ITokenService _tokenService;
-        private readonly UserFactory _userFactory;
+        private readonly IUserFactory _userFactory;
 
-        public AuthService(IUserRepository userRepository, ITokenService tokenService, UserFactory userFactory)
+        public AuthService(IUserRepository userRepository, ITokenService tokenService, IUserFactory userFactory)
         {
             _userRepository = userRepository;
             _tokenService = tokenService;

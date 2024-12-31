@@ -1,8 +1,6 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using PrivateClinicsWebNet.Application.Services;
@@ -13,8 +11,6 @@ using PrivateClinicsWebNet.DataAccess.Abstractions;
 using PrivateClinicsWebNet.DataAccess.Entities;
 using PrivateClinicsWebNet.DataAccess.Services;
 using PrivateClinicsWebNet.Application.Abstractions;
-using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Text;
 using PrivateClinicsWebNet.BusinessLogic.Factories;
 
@@ -84,10 +80,10 @@ namespace PrivateClinicsNetWebApi.Extensions
         {
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IRoleRepository, RoleRepository>();
+            services.AddScoped<IUserFactory, UserFactory>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<ITokenService, JwtTokenService>();
-            services.AddScoped<UserFactory>();
             return services;
         }
 

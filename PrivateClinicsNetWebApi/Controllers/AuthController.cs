@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using PrivateClinicsWebNet.Application.Abstractions;
 using PrivateClinicsWebNet.Application.DTOs;
 using PrivateClinicsWebNet.Application.Services;
 
@@ -6,11 +7,11 @@ namespace PrivateClinicsNetWebApi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class AuthConroller : ControllerBase
+    public class AuthController : ControllerBase
     {
-        private readonly AuthService _authService;
+        private readonly IAuthService _authService;
 
-        public AuthConroller(AuthService authService)
+        public AuthController(IAuthService authService)
         {
             _authService = authService;
         }
