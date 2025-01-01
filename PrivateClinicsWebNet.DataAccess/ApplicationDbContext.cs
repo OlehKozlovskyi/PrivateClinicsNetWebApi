@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using PrivateClinicsWebNet.BusinessLogic.Entities;
+using PrivateClinicsWebNet.DataAccess.Configurations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,8 @@ namespace PrivateClinicsWebNet.DataAccess
 {
     public class ApplicationDbContext : IdentityDbContext<IdentityUser>
     {
+        public DbSet<Appointment> Appointments {  get; set; } 
+
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             :base(options){ }
 
@@ -19,6 +22,7 @@ namespace PrivateClinicsWebNet.DataAccess
         {
             base.OnModelCreating(builder);
             builder.Entity<IdentityRole>().HasData(RoleRegistry.Admin, RoleRegistry.Doctor, RoleRegistry.Patient);
+            builder.ApplyConfiguration(new AppointmentConfiguration());
         }
     }
 }

@@ -8,6 +8,8 @@ namespace PrivateClinicsWebNet.BusinessLogic.Entities
 {
     public class Appointment
     {
+        public Appointment() { }
+
         public Appointment(string externalId, string patientId, string doctorId, DateTime date, Patient patient, Doctor doctor)
         {
             Id = Guid.NewGuid();
