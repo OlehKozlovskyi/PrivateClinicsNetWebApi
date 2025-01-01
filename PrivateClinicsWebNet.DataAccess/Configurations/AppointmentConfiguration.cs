@@ -16,14 +16,11 @@ namespace PrivateClinicsWebNet.DataAccess.Configurations
         {
             builder.ToTable("Appointment").Property(p => p.ExternalId).IsRequired();
             builder.HasIndex(p => p.ExternalId).IsUnique();
-            builder.Property(p => p.ExternalId).HasAnnotation("Range", new Range(1, 60));
             builder.Property(p => p.PatientId).IsRequired();
-            builder.Property(p => p.PatientId).HasAnnotation("Range", new Range(1, 60));
             builder.Property(p => p.DoctorId).IsRequired();
-            builder.Property(p => p.DoctorId).HasAnnotation("Range", new Range(1, 60));
             builder.ToTable("Appointment", table =>
             {
-                table.HasCheckConstraint("CHK_Appointment_ValidDate", "Date BETWEEN NOW() AND NOW() + interval '1 year'");
+                table.HasCheckConstraint("CHK_Appointment_ValidDate", $"{nameof(Appointment.Date)} BETWEEN NOW() AND NOW() + interval '1 year'");
             });
         }
     }
