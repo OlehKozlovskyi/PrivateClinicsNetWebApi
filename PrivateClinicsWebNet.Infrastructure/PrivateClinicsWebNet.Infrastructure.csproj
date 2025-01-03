@@ -7,14 +7,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="13.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.0" />
+    <Folder Include="Migrator\Exceptions\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\BusinessLogic\PrivateClinicsWebNet.BusinessLogic.csproj" />
     <ProjectReference Include="..\PrivateClinicsWebNet.DataAccess\PrivateClinicsWebNet.DataAccess.csproj" />
-    <ProjectReference Include="..\PrivateClinicsWebNet.Infrastructure\PrivateClinicsWebNet.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
