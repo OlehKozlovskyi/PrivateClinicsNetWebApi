@@ -22,6 +22,11 @@ namespace PrivateClinicsWebNet.DataAccess.Configurations
             {
                 table.HasCheckConstraint("CHK_Appointment_ValidDate", $"{nameof(Appointment.Date)} BETWEEN NOW() AND NOW() + interval '1 year'");
             });
+
+            builder.Property(p => p.Date)
+                .HasConversion(
+                    value => DateTime.SpecifyKind(value, DateTimeKind.Utc),
+                    value => DateTime.SpecifyKind(value, DateTimeKind.Utc));
         }
     }
 }
