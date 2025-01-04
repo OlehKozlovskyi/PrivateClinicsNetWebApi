@@ -20,8 +20,11 @@ namespace PrivateClinicsNetWebApi
         {
             _builder = WebApplication.CreateBuilder(args);
             _configuration = _builder.Configuration;
+            _builder.Logging.ClearProviders();
+            _builder.Logging.AddConsole();
             _services = _builder.Services;
             _services.AddJwtTokenSettings("JwtSecurityTokenSettings", _configuration);
+            _services.AddUserMigrationDefaults("UserMigrationDefaults", _configuration);
             _services.AddPostgresDb(_configuration);
             _services.AddUserAuthorization();
             _services.AddUserAuthentication(_configuration);

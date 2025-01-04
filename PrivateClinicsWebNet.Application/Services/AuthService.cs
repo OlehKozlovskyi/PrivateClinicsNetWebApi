@@ -39,7 +39,7 @@ namespace PrivateClinicsWebNet.Application.Services
         public async Task Register(RegisterDto registerDto)
         {
             var user = _userFactory.GetUser(registerDto.Email, registerDto.UserRole);
-            var result = await _userRepository.RegisterUser(user, registerDto.Password);
+            var result = await _userRepository.RegisterUserAsync(user, registerDto.Password);
             if (!result.Succeeded)
             {
                 throw new RegistrationFailedException();

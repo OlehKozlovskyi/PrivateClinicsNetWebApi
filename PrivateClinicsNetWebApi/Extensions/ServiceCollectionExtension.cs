@@ -13,6 +13,9 @@ using PrivateClinicsWebNet.DataAccess.Services;
 using PrivateClinicsWebNet.Application.Abstractions;
 using System.Text;
 using PrivateClinicsWebNet.BusinessLogic.Factories;
+using PrivateClinicsWebNet.Infrastructure.Migrator.Models;
+using PrivateClinicsWebNet.Infrastructure.Migrator.Abstractions;
+using PrivateClinicsWebNet.Infrastructure.Migrator.Services;
 
 namespace PrivateClinicsNetWebApi.Extensions
 {
@@ -29,6 +32,14 @@ namespace PrivateClinicsNetWebApi.Extensions
             string sectionName, IConfiguration configuration)
         {
             services.Configure<JwtSecurityTokenSettings>(
+                configuration.GetSection(sectionName));
+            return services;
+        }
+
+        public static IServiceCollection AddUserMigrationDefaults(this IServiceCollection services,
+            string sectionName, IConfiguration configuration)
+        {
+            services.Configure<UserMigrationDefaults>(
                 configuration.GetSection(sectionName));
             return services;
         }
@@ -81,9 +92,11 @@ namespace PrivateClinicsNetWebApi.Extensions
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IRoleRepository, RoleRepository>();
             services.AddScoped<IUserFactory, UserFactory>();
+            services.AddScoped<IFileReader, JsonFileReader>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<ITokenService, JwtTokenService>();
+            services.AddScoped<IDataMigrationService, DataMigrationService>();
             return services;
         }
 

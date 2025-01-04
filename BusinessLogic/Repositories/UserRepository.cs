@@ -12,7 +12,7 @@ namespace PrivateClinicsWebNet.BusinessLogic.Repositories
             _userManager = userManager;
         }
 
-        public async Task<IdentityResult> RegisterUser(IdentityUser user, string password)
+        public async Task<IdentityResult> RegisterUserAsync(IdentityUser user, string password)
         {
             return await _userManager.CreateAsync(user, password);
         }
