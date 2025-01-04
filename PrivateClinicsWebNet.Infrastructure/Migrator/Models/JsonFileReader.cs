@@ -6,26 +6,41 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using PrivateClinicsWebNet.Infrastructure.Migrator.Abstractions;
+using Microsoft.Extensions.Logging;
 
 namespace PrivateClinicsWebNet.Infrastructure.Migrator.Models
 {
     public class JsonFileReader : IFileReader
     {
-        public List<Doctor> Read(string link)
+        private readonly ILogger _logger;
+
+        public JsonFileReader(ILogger<JsonFileReader> logger) 
+        {
+            _logger = logger;
+        }
+        public List<Doctor> Read(string path)
         {
             JsonSerializer serializer = new JsonSerializer();
             var doctorsList = new List<Doctor>();
-            using (StreamReader fileReader = File.OpenText(link))
-            using (JsonTextReader jsonReader = new JsonTextReader(fileReader))
+            try
             {
-                while (jsonReader.Read())
+                using (StreamReader fileReader = File.OpenText(path))
+                using (JsonTextReader jsonReader = new JsonTextReader(fileReader))
                 {
-                    if (jsonReader.TokenType == JsonToken.StartObject)
+                    while (jsonReader.Read())
                     {
-                        var doctor = serializer.Deserialize<Doctor>(jsonReader);
-                        doctorsList.Add(doctor);
+                        if (jsonReader.TokenType == JsonToken.StartObject)
+                        {
+                            var doctor = serializer.Deserialize<Doctor>(jsonReader);
+                            doctorsList.Add(doctor);
+                        }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occured while was started file reading", 
+                    DateTime.UtcNow.ToLongTimeString());
             }
             return doctorsList;
         }
