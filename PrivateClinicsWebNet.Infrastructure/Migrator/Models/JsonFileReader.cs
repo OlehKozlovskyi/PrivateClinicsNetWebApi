@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using PrivateClinicsWebNet.Infrastructure.Migrator.Abstractions;
 using Microsoft.Extensions.Logging;
+using PrivateClinicsWebNet.Infrastructure.Migrator.DTOs;
 
 namespace PrivateClinicsWebNet.Infrastructure.Migrator.Models
 {
@@ -18,28 +19,21 @@ namespace PrivateClinicsWebNet.Infrastructure.Migrator.Models
         {
             _logger = logger;
         }
-        public IEnumerable<Doctor> Read(string path)
+        public IEnumerable<MigrationDto> Read(string path)
         {
             JsonSerializer serializer = new JsonSerializer();
-            var doctorsList = new List<Doctor>();
-            //try
-            //{
-                using StreamReader fileReader = File.OpenText(path);
-                using var jsonReader = new JsonTextReader(fileReader);
-                while (jsonReader.Read())
+            var migrationsList = new List<MigrationDto>();
+            using StreamReader fileReader = File.OpenText(path);
+            using var jsonReader = new JsonTextReader(fileReader);
+            while (jsonReader.Read())
+            {
+                if (jsonReader.TokenType == JsonToken.StartObject)
                 {
-                    if (jsonReader.TokenType == JsonToken.StartObject)
-                    {
-                        var doctor = serializer.Deserialize<Doctor>(jsonReader);
-                        yield return doctor;
-                    }
+                    var migrationDto = serializer.Deserialize<MigrationDto>(jsonReader);
+                    yield return migrationDto;
                 }
-            ////}
-            ////catch (Exception ex)
-            ////{
-            //    _logger.LogError(ex, "An error occured while was started file reading",
-            //        DateTime.UtcNow.ToLongTimeString());
-            //}
+            }
+            _logger.LogInformation("File has reading successfully");
         }
     }
 }

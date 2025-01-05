@@ -18,7 +18,7 @@ namespace PrivateClinicsNetWebApi.Controllers
 
         [HttpPost("migrate-data")]
         //[Authorize(Roles ="Admin")]
-        public async Task<IActionResult> RunMigration(string path = @"C:/Users/OlehKozlovskyi/Documents/GitHub/test.json")
+        public async Task<IActionResult> RunMigration(string path = @"C:/Users/OlehKozlovskyi/Documents/GitHub/test3.json")
         {
             await _migrationService.MigrateDataAsync(path);
             return Ok("Migration has completed successfully");

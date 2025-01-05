@@ -43,38 +43,15 @@ namespace PrivateClinicsWebNet.Infrastructure.Migrator.Services
             _dataParser = dataParser;
         }
 
-        //Отримані дані зпроецирувати на dDTO, потім видалити Patient і залишити лише id
-        //Лікарів зареєструвати з айдішками пацієнтів, а пацієнтів окремо
         public async Task MigrateDataAsync(string path)
         {
             await using var transaction = await _dbContext.Database.BeginTransactionAsync();
             try
             {
-                foreach (var doctor in _reader.Read(path))
+                foreach (var migrationData in _reader.Read(path))
                 {
-                    List<Patient> patients = _dataParser.GetPatients(doctor);
-                    foreach (var patient in patients)
-                    {
-                        if (await _userRepository.FindByEmailAsync(patient.Email) == null)
-                        {
-                            var registerPatientResult = await _userRepository.RegisterUserAsync(patient, _defaultUsersSettings.DefaultPassword);
-                            if (!registerPatientResult.Succeeded)
-                            {
-                                throw new UserNotMigratedException();
-                            }
-                            await _userRepository.AddToRoleAsync(patient, nameof(Patient));
-                        }
-                    }
-                    if (!_dbContext.Users.Local.Any(entity=>entity.Id==doctor.Id))
-                    {
-                        var result = await _userRepository.RegisterUserAsync(_dataParser.GetDoctor(doctor), _defaultUsersSettings.DefaultPassword);
-                        if (!result.Succeeded)
-                        {
-                            throw new UserNotMigratedException();
-                        }
-                        await _userRepository.AddToRoleAsync(doctor, nameof(Doctor));
-                        _dbContext.Entry(doctor).State = EntityState.Detached;
-                    }
+                    var migrationPatientsResult = await MigratePatientsAsync(migrationData.PatientsList);
+                    var migrationDoctorResult = await MigrateDoctorAsync(migrationData.Doctor);
                 }
                 await transaction.CommitAsync();
                 _logger.LogInformation("Migration has completed successfully", DateTime.UtcNow.ToLongTimeString());
@@ -84,6 +61,38 @@ namespace PrivateClinicsWebNet.Infrastructure.Migrator.Services
                 await transaction.RollbackAsync();
                 _logger.LogError(ex, "Data migration operation was failed!", DateTime.UtcNow.ToLongTimeString());
             }
+        }
+
+        private async Task<bool> MigratePatientsAsync(List<Patient> patients)
+        {
+            foreach (var patient in patients)
+            {
+                if (await _userRepository.FindByEmailAsync(patient.Email) == null)
+                {
+                    var registerPatientResult = await _userRepository.RegisterUserAsync(patient, _defaultUsersSettings.DefaultPassword);
+                    if (!registerPatientResult.Succeeded)
+                    {
+                        throw new UserNotMigratedException();
+                    }
+                    await _userRepository.AddToRoleAsync(patient, nameof(Patient));
+                }
+            }
+            return true;
+        }
+
+        private async Task<bool> MigrateDoctorAsync(Doctor doctor)
+        {
+            if (!_dbContext.Users.Local.Any(entity => entity.Id == doctor.Id))
+            {
+                var result = await _userRepository.RegisterUserAsync(doctor, _defaultUsersSettings.DefaultPassword);
+                if (!result.Succeeded)
+                {
+                    throw new UserNotMigratedException();
+                }
+                await _userRepository.AddToRoleAsync(doctor, nameof(Doctor));
+                _dbContext.Entry(doctor).State = EntityState.Detached;
+            }
+            return true;
         }
     }
 }
