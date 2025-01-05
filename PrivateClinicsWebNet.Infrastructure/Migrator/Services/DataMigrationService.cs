@@ -46,6 +46,16 @@ namespace PrivateClinicsWebNet.Infrastructure.Migrator.Services
             {
                 foreach (var doctor in _reader.Read(path))
                 {
+                    List<Patient> patients = doctor.Appointments.Select(x => x.Patient).ToList();
+                    foreach (var patient in patients)
+                    {
+                        var registerPatientResult = await _userRepository.RegisterUserAsync(patient,_defaultUsersSettings.DefaultPassword);
+                        if (!registerPatientResult.Succeeded)
+                        {
+                            throw new UserNotMigratedException();
+                        }
+                        await _userRepository.AddToRoleAsync(patient, nameof(Patient));
+                    }
                     var result = await _userRepository.RegisterUserAsync(doctor, _defaultUsersSettings.DefaultPassword);
                     if (!result.Succeeded)
                     {
