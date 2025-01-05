@@ -116,7 +116,7 @@ public class AuthServiceTests
     {
         var registerDto = new RegisterDto("example@gmail.com", "Password", "Manager");
         _mockUserRepository
-            .Setup(repository => repository.RegisterUser(It.IsAny<IdentityUser>(), registerDto.Password))
+            .Setup(repository => repository.RegisterUserAsync(It.IsAny<IdentityUser>(), registerDto.Password))
             .ReturnsAsync(IdentityResult.Success);
         var act = async () => await _authService.Register(registerDto);
         await act.Should().ThrowAsync<InvalidUserRoleException>();
@@ -127,7 +127,7 @@ public class AuthServiceTests
     public async Task Register_ShouldRegisterNewUser_WhenIncomigDataCorrect(RegisterDto registerDto)
     {
         _mockUserRepository
-            .Setup(repository => repository.RegisterUser(It.IsAny<IdentityUser>(), registerDto.Password))
+            .Setup(repository => repository.RegisterUserAsync(It.IsAny<IdentityUser>(), registerDto.Password))
             .ReturnsAsync(IdentityResult.Success);
         var act = async () => await _authService.Register(registerDto);
         await act.Should().NotThrowAsync();

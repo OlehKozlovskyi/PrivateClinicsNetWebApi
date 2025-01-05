@@ -92,6 +92,7 @@ namespace PrivateClinicsNetWebApi.Extensions
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IRoleRepository, RoleRepository>();
             services.AddScoped<IUserFactory, UserFactory>();
+            services.AddScoped<DataParser>();
             services.AddScoped<IFileReader, JsonFileReader>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IRoleService, RoleService>();
