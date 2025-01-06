@@ -1,9 +1,9 @@
 ﻿namespace PrivateClinicsWebNet.Infrastructure.Migrator.Exceptions
 {
     [Serializable]
-    public class UserNotMigratedException : Exception
+    public class PatientNotMigratedException : Exception
     {
-        public UserNotMigratedException() 
+        public PatientNotMigratedException() 
             : base(){ }
 
     }

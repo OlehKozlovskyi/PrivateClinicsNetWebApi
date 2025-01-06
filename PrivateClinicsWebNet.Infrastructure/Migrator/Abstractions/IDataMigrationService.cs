@@ -1,7 +1,9 @@
-﻿namespace PrivateClinicsWebNet.Infrastructure.Migrator.Abstractions
+﻿using PrivateClinicsWebNet.Application.Wrapper;
+
+namespace PrivateClinicsWebNet.Infrastructure.Migrator.Abstractions
 {
     public interface IDataMigrationService
     {
-        Task MigrateDataAsync(string path);
+        Task<Result<bool>> MigrateDataAsync(string path);
     }
 }

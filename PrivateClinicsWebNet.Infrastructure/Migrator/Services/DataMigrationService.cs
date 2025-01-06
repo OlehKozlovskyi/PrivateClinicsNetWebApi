@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using System.Numerics;
+using PrivateClinicsWebNet.Application.Wrapper;
 
 namespace PrivateClinicsWebNet.Infrastructure.Migrator.Services
 {
@@ -42,27 +43,29 @@ namespace PrivateClinicsWebNet.Infrastructure.Migrator.Services
             _defaultUsersSettings = userSettings.Value;
         }
 
-        public async Task MigrateDataAsync(string path)
+        public async Task<Result<bool>> MigrateDataAsync(string path)
         {
             await using var transaction = await _dbContext.Database.BeginTransactionAsync();
             try
             {
                 foreach (var migrationData in _reader.Read(path))
                 {
-                    var migrationPatientsResult = await MigratePatientsAsync(migrationData.PatientsList);
-                    var migrationDoctorResult = await MigrateDoctorAsync(migrationData.Doctor);
+                    await MigratePatientsAsync(migrationData.PatientsList);
+                    await MigrateDoctorAsync(migrationData.Doctor);
                 }
                 await transaction.CommitAsync();
                 _logger.LogInformation("Migration has completed successfully", DateTime.UtcNow.ToLongTimeString());
+                return await Result<bool>.SucceessAsync();
             }
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                _logger.LogError(ex, "Data migration operation was failed!", DateTime.UtcNow.ToLongTimeString());
+                _logger.LogError(ex, "Data migration operation has failed!", DateTime.UtcNow.ToLongTimeString());
+                return await Result<bool>.FailureAsync();
             }
         }
 
-        private async Task<bool> MigratePatientsAsync(List<Patient> patients)
+        private async Task<Result<bool>> MigratePatientsAsync(List<Patient> patients)
         {
             foreach (var patient in patients)
             {
@@ -71,26 +74,26 @@ namespace PrivateClinicsWebNet.Infrastructure.Migrator.Services
                     var registerPatientResult = await _userRepository.RegisterUserAsync(patient, _defaultUsersSettings.DefaultPassword);
                     if (!registerPatientResult.Succeeded)
                     {
-                        throw new UserNotMigratedException();
+                        throw new PatientNotMigratedException();
                     }
                     await _userRepository.AddToRoleAsync(patient, nameof(Patient));
                 }
             }
-            return true;
+            return await Result<bool>.SucceessAsync();
         }
 
-        private async Task<bool> MigrateDoctorAsync(Doctor doctor)
+        private async Task<Result<bool>> MigrateDoctorAsync(Doctor doctor)
         {
             if (!IsTracked(doctor))
             {
                 var result = await _userRepository.RegisterUserAsync(doctor, _defaultUsersSettings.DefaultPassword);
                 if (!result.Succeeded)
                 {
-                    throw new UserNotMigratedException();
+                    throw new DoctorNotMigratedException();
                 }
                 await _userRepository.AddToRoleAsync(doctor, nameof(Doctor));
             }
-            return true;
+            return await Result<bool>.SucceessAsync();
         }
 
         private bool IsTracked(IdentityUser user)
