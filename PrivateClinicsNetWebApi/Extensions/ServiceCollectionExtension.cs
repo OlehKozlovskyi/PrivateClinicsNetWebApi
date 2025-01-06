@@ -109,7 +109,7 @@ namespace PrivateClinicsNetWebApi.Extensions
                 {
                     Title = "Private clinics network WebApi",
                     Version = "v1",
-                    Description = "Task 1.Implementation of User Authorization and Registration"
+                    Description = "Task 3.Implementation data migration"
                 });
 
                 options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme

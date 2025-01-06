@@ -43,7 +43,7 @@ namespace PrivateClinicsWebNet.Infrastructure.Migrator.Services
             _defaultUsersSettings = userSettings.Value;
         }
 
-        public async Task<Result<bool>> MigrateDataAsync(string path)
+        public async Task<Result<string>> MigrateDataAsync(string path)
         {
             await using var transaction = await _dbContext.Database.BeginTransactionAsync();
             try
@@ -55,13 +55,13 @@ namespace PrivateClinicsWebNet.Infrastructure.Migrator.Services
                 }
                 await transaction.CommitAsync();
                 _logger.LogInformation("Migration has completed successfully", DateTime.UtcNow.ToLongTimeString());
-                return await Result<bool>.SucceessAsync();
+                return await Result<string>.SuccessAsync("Migration has completed successfully");
             }
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
                 _logger.LogError(ex, "Data migration operation has failed!", DateTime.UtcNow.ToLongTimeString());
-                return await Result<bool>.FailureAsync();
+                return await Result<string>.FailureAsync("Data migration operation has failed!");
             }
         }
 
@@ -79,7 +79,7 @@ namespace PrivateClinicsWebNet.Infrastructure.Migrator.Services
                     await _userRepository.AddToRoleAsync(patient, nameof(Patient));
                 }
             }
-            return await Result<bool>.SucceessAsync();
+            return await Result<bool>.SuccessAsync();
         }
 
         private async Task<Result<bool>> MigrateDoctorAsync(Doctor doctor)
@@ -93,7 +93,7 @@ namespace PrivateClinicsWebNet.Infrastructure.Migrator.Services
                 }
                 await _userRepository.AddToRoleAsync(doctor, nameof(Doctor));
             }
-            return await Result<bool>.SucceessAsync();
+            return await Result<bool>.SuccessAsync();
         }
 
         private bool IsTracked(IdentityUser user)

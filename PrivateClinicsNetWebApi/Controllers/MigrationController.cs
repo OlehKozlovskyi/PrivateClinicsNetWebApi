@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using PrivateClinicsNetWebApi.Extensions;
 using PrivateClinicsWebNet.Infrastructure.Migrator.Abstractions;
 
 namespace PrivateClinicsNetWebApi.Controllers
@@ -17,11 +18,10 @@ namespace PrivateClinicsNetWebApi.Controllers
         }
 
         [HttpPost("migrate-data")]
-        //[Authorize(Roles ="Admin")]
         public async Task<IActionResult> RunMigration(string path = @"C:/Users/OlehKozlovskyi/Documents/GitHub/test3.json")
         {
-            await _migrationService.MigrateDataAsync(path);
-            return Ok("Migration has completed successfully");
+            var result = await _migrationService.MigrateDataAsync(path);
+            return result.ToResponse();
         }
     }
 }
