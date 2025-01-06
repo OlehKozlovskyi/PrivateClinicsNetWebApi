@@ -22,7 +22,6 @@ namespace PrivateClinicsWebNet.Infrastructure.Migrator.Models
         public IEnumerable<MigrationDto> Read(string path)
         {
             JsonSerializer serializer = new JsonSerializer();
-            var migrationsList = new List<MigrationDto>();
             using StreamReader fileReader = File.OpenText(path);
             using var jsonReader = new JsonTextReader(fileReader);
             while (jsonReader.Read())
