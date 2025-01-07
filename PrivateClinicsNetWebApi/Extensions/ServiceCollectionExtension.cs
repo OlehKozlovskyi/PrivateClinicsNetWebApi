@@ -36,10 +36,10 @@ namespace PrivateClinicsNetWebApi.Extensions
             return services;
         }
 
-        public static IServiceCollection AddUserMigrationDefaults(this IServiceCollection services,
+        public static IServiceCollection AddUserMigrationOptions(this IServiceCollection services,
             string sectionName, IConfiguration configuration)
         {
-            services.Configure<UserMigrationDefaults>(
+            services.Configure<UserMigrationOptions>(
                 configuration.GetSection(sectionName));
             return services;
         }

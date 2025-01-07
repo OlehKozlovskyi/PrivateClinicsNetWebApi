@@ -26,14 +26,14 @@ namespace PrivateClinicsWebNet.Infrastructure.Migrator.Services
         private readonly IUserRepository _userRepository;
         private readonly ApplicationDbContext _dbContext;
         private readonly ILogger _logger;
-        private readonly UserMigrationDefaults _defaultUsersSettings;
+        private readonly UserMigrationOptions _defaultUsersSettings;
 
         public DataMigrationService(
             IFileReader fileReader,
             IUserRepository userRepository,
             ApplicationDbContext applicationDbContext,
             ILogger<DataMigrationService> logger,
-            IOptions<UserMigrationDefaults> userSettings
+            IOptions<UserMigrationOptions> userSettings
             )
         {
             _reader = fileReader;
@@ -98,7 +98,10 @@ namespace PrivateClinicsWebNet.Infrastructure.Migrator.Services
 
         private bool IsTracked(IdentityUser user)
         {
-            return _dbContext.Users.Local.Any(entity => entity.Id == user.Id);
+            HashSet<string> users = _dbContext.Users.Local
+                .Select(x => x.Id)
+                .ToHashSet<string>();
+            return users.Contains(user.Id);
         }
     }
 }

@@ -1,5 +1,6 @@
 using PrivateClinicsWebNet.DataAccess.Middlewares;
 using PrivateClinicsNetWebApi.Extensions;
+using PrivateClinicsWebNet.Infrastructure.Migrator.Models;
 
 namespace PrivateClinicsNetWebApi
 {
@@ -24,7 +25,7 @@ namespace PrivateClinicsNetWebApi
             _builder.Logging.AddConsole();
             _services = _builder.Services;
             _services.AddJwtTokenSettings("JwtSecurityTokenSettings", _configuration);
-            _services.AddUserMigrationDefaults("UserMigrationDefaults", _configuration);
+            _services.AddUserMigrationOptions(nameof(UserMigrationOptions), _configuration);
             _services.AddPostgresDb(_configuration);
             _services.AddUserAuthorization();
             _services.AddUserAuthentication(_configuration);
