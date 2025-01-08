@@ -11,17 +11,11 @@ namespace PrivateClinicsWebNet.BusinessLogic.Factories
         {
             if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(identityRole))
                 throw new NullReferenceException();
-            switch (identityRole)
-            {
-                case "Doctor":
-                    return new Doctor() { Email = email, UserName = email };
-                case "Patient":
-                    return new Patient() { Email = email, UserName = email };
-                case "Admin":
-                    return new Admin() { Email = email, UserName = email };
-                default:
-                    throw new InvalidUserRoleException(identityRole);
-            }
+            var type = UserRegistry.GetUserTypeByName(identityRole);
+            var userInstance = (IdentityUser)Activator.CreateInstance(type);
+            userInstance.Email = email;
+            userInstance.UserName = email;
+            return userInstance;
         }
     }
 }
