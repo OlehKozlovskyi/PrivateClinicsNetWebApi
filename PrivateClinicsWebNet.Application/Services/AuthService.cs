@@ -31,8 +31,8 @@ namespace PrivateClinicsWebNet.Application.Services
             {
                 throw new InvalidPasswordException();
             }
-
-            var token = _tokenService.GenerateJwt(user, loginDto.Email);
+            var userRoles = await _userRepository.GetRolesByUser(user);
+            var token = _tokenService.GenerateJwt(user, loginDto.Email, userRoles);
             return token;
         }
 

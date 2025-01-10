@@ -8,4 +8,5 @@ public interface IUserRepository
     Task<bool> CheckPasswordAsync(IdentityUser user, string password);
     Task<IdentityUser> FindByEmailAsync(string email);
     Task<IdentityResult> RegisterUserAsync(IdentityUser user, string password);
+    Task<IList<string>> GetRolesByUser(IdentityUser user);
 }

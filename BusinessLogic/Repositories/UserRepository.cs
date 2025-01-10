@@ -27,6 +27,10 @@ namespace PrivateClinicsWebNet.BusinessLogic.Repositories
             return await _userManager.FindByEmailAsync(email);
         }
 
+        public async Task<IList<string>> GetRolesByUser(IdentityUser user)
+        {
+            return await _userManager.GetRolesAsync(user);
+        }
         public async Task AddToRoleAsync(IdentityUser user, string role)
         {
             await _userManager.AddToRoleAsync(user, role);

@@ -24,9 +24,9 @@ namespace PrivateClinicsWebNet.DataAccess.Services
             _configuration = settings.Value;
         }
 
-        public string GenerateJwt(IdentityUser user, string email)
+        public string GenerateJwt(IdentityUser user, string email, IList<string> roles)
         {
-            var token = GenerateEncryptedToken(GetClaimsAsync(user, email), GetSigningCredentials());
+            var token = GenerateEncryptedToken(GetClaimsAsync(user, email, roles), GetSigningCredentials());
             return token;
         }
 
@@ -44,14 +44,15 @@ namespace PrivateClinicsWebNet.DataAccess.Services
             return encryptedToken;
         }
 
-        private IEnumerable<Claim> GetClaimsAsync(IdentityUser user, string email, string role)
+        private IEnumerable<Claim> GetClaimsAsync(IdentityUser user, string email, IList<string> roles)
         {
             var claims = new List<Claim>()
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Id),
                 new Claim(JwtRegisteredClaimNames.Email, email),
-                new Claim(ClaimTypes.Role, role)
             };
+            foreach (var role in roles)
+                claims.Add(new Claim(ClaimTypes.Role, role));
             return claims;
         }
 

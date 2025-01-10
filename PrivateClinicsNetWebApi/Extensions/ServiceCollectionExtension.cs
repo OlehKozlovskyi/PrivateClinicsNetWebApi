@@ -94,11 +94,9 @@ namespace PrivateClinicsNetWebApi.Extensions
         public static IServiceCollection AddCustomServices(this IServiceCollection services)
         {
             services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<IRoleRepository, RoleRepository>();
             services.AddScoped<IUserFactory, UserFactory>();
             services.AddScoped<IFileReader, JsonFileReader>();
             services.AddScoped<IAuthService, AuthService>();
-            services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<ITokenService, JwtTokenService>();
             services.AddScoped<IDataMigrationService, DataMigrationService>();
             return services;

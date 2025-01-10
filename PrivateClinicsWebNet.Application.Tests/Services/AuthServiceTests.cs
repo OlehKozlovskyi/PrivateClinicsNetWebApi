@@ -45,6 +45,7 @@ public class AuthServiceTests
         var loginDto = new LoginDto("user@gmail.com", "12");
         var user = new IdentityUser { UserName = "user@gmail.com", PasswordHash = "12" };
         var expectedToken = "mock_token";
+        IList<string> userRoles = new List<string> { "Doctor" };
         _mockUserRepository
             .Setup(repository => repository.FindByEmailAsync(loginDto.Email))
             .ReturnsAsync(user);
@@ -52,7 +53,7 @@ public class AuthServiceTests
             .Setup(repository => repository.CheckPasswordAsync(user, loginDto.Password))
             .ReturnsAsync(true);
         _mockTokenService
-            .Setup(service => service.GenerateJwt(user, loginDto.Email))
+            .Setup(service => service.GenerateJwt(user, loginDto.Email, userRoles))
             .Returns(expectedToken);
         var result = await _authService.Login(loginDto);
         result.Should().BeSameAs(expectedToken);
