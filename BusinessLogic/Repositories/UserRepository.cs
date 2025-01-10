@@ -1,10 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using PrivateClinicsWebNet.BusinessLogic.Abstractions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PrivateClinicsWebNet.BusinessLogic.Repositories
 {
@@ -17,7 +12,7 @@ namespace PrivateClinicsWebNet.BusinessLogic.Repositories
             _userManager = userManager;
         }
 
-        public async Task<IdentityResult> RegisterUser(IdentityUser user, string password)
+        public async Task<IdentityResult> RegisterUserAsync(IdentityUser user, string password)
         {
             return await _userManager.CreateAsync(user, password);
         }
@@ -32,6 +27,10 @@ namespace PrivateClinicsWebNet.BusinessLogic.Repositories
             return await _userManager.FindByEmailAsync(email);
         }
 
+        public async Task<IList<string>> GetRolesByUser(IdentityUser user)
+        {
+            return await _userManager.GetRolesAsync(user);
+        }
         public async Task AddToRoleAsync(IdentityUser user, string role)
         {
             await _userManager.AddToRoleAsync(user, role);

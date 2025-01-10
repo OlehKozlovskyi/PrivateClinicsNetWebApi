@@ -4,5 +4,5 @@ namespace PrivateClinicsWebNet.DataAccess.Abstractions;
 
 public interface ITokenService
 {
-    string GenerateJwt(IdentityUser user, string email);
+    string GenerateJwt(IdentityUser user, string email, IList<string> roles);
 }

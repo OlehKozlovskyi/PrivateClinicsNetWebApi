@@ -1,17 +1,14 @@
 ﻿using PrivateClinicsWebNet.Application.Services;
-using PrivateClinicsWebNet.Application.Abstractions;
-using PrivateClinicsWebNet.BusinessLogic.Repositories;
 using Moq;
 using PrivateClinicsWebNet.BusinessLogic.Abstractions;
 using PrivateClinicsWebNet.DataAccess.Abstractions;
-using PrivateClinicsWebNet.DataAccess.Services;
-using AutoMapper;
-using PrivateClinicsWebNet.Application.Mapping;
 using Microsoft.AspNetCore.Identity;
 using PrivateClinicsWebNet.Application.DTOs;
 using FluentAssertions;
 using PrivateClinicsWebNet.Application.Exceptions;
 using PrivateClinicsWebNet.Application.Tests.TestData;
+using PrivateClinicsWebNet.BusinessLogic.Factories;
+using PrivateClinicsWebNet.BusinessLogic.Exceptions;
 
 namespace PrivateClinicsWebNet.Application.Tests.Services;
 
@@ -20,14 +17,14 @@ public class AuthServiceTests
     private readonly Mock<IUserRepository> _mockUserRepository;
     private readonly Mock<ITokenService> _mockTokenService;
     private readonly AuthService _authService;
-    private readonly Mapper _mapper;
+    private readonly UserFactory _userFactory;
 
     public AuthServiceTests()
     {
-        _mapper = new Mapper(new MapperConfiguration(config => config.AddProfile<UserRegistrationProfileMap>()));
         _mockUserRepository = new Mock<IUserRepository>();
         _mockTokenService = new Mock<ITokenService>();
-        _authService = new AuthService(_mockUserRepository.Object, _mockTokenService.Object, _mapper);
+        _userFactory = new UserFactory();
+        _authService = new AuthService(_mockUserRepository.Object, _mockTokenService.Object, _userFactory);
     }
 
     #region Login tests
@@ -48,6 +45,7 @@ public class AuthServiceTests
         var loginDto = new LoginDto("user@gmail.com", "12");
         var user = new IdentityUser { UserName = "user@gmail.com", PasswordHash = "12" };
         var expectedToken = "mock_token";
+        IList<string> userRoles = new List<string> { "Doctor" };
         _mockUserRepository
             .Setup(repository => repository.FindByEmailAsync(loginDto.Email))
             .ReturnsAsync(user);
@@ -55,7 +53,7 @@ public class AuthServiceTests
             .Setup(repository => repository.CheckPasswordAsync(user, loginDto.Password))
             .ReturnsAsync(true);
         _mockTokenService
-            .Setup(service => service.GenerateJwt(user, loginDto.Email))
+            .Setup(service => service.GenerateJwt(user, loginDto.Email, userRoles))
             .Returns(expectedToken);
         var result = await _authService.Login(loginDto);
         result.Should().BeSameAs(expectedToken);
@@ -119,7 +117,7 @@ public class AuthServiceTests
     {
         var registerDto = new RegisterDto("example@gmail.com", "Password", "Manager");
         _mockUserRepository
-            .Setup(repository => repository.RegisterUser(It.IsAny<IdentityUser>(), registerDto.Password))
+            .Setup(repository => repository.RegisterUserAsync(It.IsAny<IdentityUser>(), registerDto.Password))
             .ReturnsAsync(IdentityResult.Success);
         var act = async () => await _authService.Register(registerDto);
         await act.Should().ThrowAsync<InvalidUserRoleException>();
@@ -130,7 +128,7 @@ public class AuthServiceTests
     public async Task Register_ShouldRegisterNewUser_WhenIncomigDataCorrect(RegisterDto registerDto)
     {
         _mockUserRepository
-            .Setup(repository => repository.RegisterUser(It.IsAny<IdentityUser>(), registerDto.Password))
+            .Setup(repository => repository.RegisterUserAsync(It.IsAny<IdentityUser>(), registerDto.Password))
             .ReturnsAsync(IdentityResult.Success);
         var act = async () => await _authService.Register(registerDto);
         await act.Should().NotThrowAsync();

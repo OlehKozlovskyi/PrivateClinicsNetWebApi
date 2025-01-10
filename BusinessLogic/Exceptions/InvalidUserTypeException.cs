@@ -1,0 +1,14 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace PrivateClinicsWebNet.BusinessLogic.Exceptions
+{
+    public class InvalidUserTypeException : Exception
+    {
+        public InvalidUserTypeException()
+            :base(){ }
+    }
+}

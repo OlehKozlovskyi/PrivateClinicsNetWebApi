@@ -37,7 +37,7 @@ namespace PrivateClinicsWebNet.DataAccess.Middlewares
             var message = JsonSerializer.Serialize(new
             {
                 StatusCode = response.StatusCode,
-                Message = "Unexpected erroe occurred",
+                Message = "Unexpected error occurred",
             });
 
             return response.WriteAsync(message);

@@ -1,8 +1,6 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using PrivateClinicsWebNet.Application.Services;
@@ -13,9 +11,13 @@ using PrivateClinicsWebNet.DataAccess.Abstractions;
 using PrivateClinicsWebNet.DataAccess.Entities;
 using PrivateClinicsWebNet.DataAccess.Services;
 using PrivateClinicsWebNet.Application.Abstractions;
-using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Text;
+using PrivateClinicsWebNet.BusinessLogic.Factories;
+using PrivateClinicsWebNet.Infrastructure.Migrator.Models;
+using PrivateClinicsWebNet.Infrastructure.Migrator.Abstractions;
+using PrivateClinicsWebNet.Infrastructure.Migrator.Services;
+using Microsoft.Extensions.Options;
+using System.Security.Claims;
 
 namespace PrivateClinicsNetWebApi.Extensions
 {
@@ -36,6 +38,14 @@ namespace PrivateClinicsNetWebApi.Extensions
             return services;
         }
 
+        public static IServiceCollection AddUserMigrationOptions(this IServiceCollection services,
+            string sectionName, IConfiguration configuration)
+        {
+            services.Configure<UserMigrationOptions>(
+                configuration.GetSection(sectionName));
+            return services;
+        }
+
         public static IServiceCollection AddUserAuthorization(this IServiceCollection services)
         {
             services.AddIdentity<IdentityUser, IdentityRole>(options =>
@@ -51,7 +61,7 @@ namespace PrivateClinicsNetWebApi.Extensions
             return services;
         }
 
-        public static IServiceCollection AddUserAuthentication(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddUserAuthentication(this IServiceCollection services, JwtSecurityTokenSettings configuration)
         {
             services.AddAuthentication(options =>
             {
@@ -60,15 +70,17 @@ namespace PrivateClinicsNetWebApi.Extensions
             })
                 .AddJwtBearer(options =>
                 {
+                    options.IncludeErrorDetails = true;
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuer = true,
                         ValidateAudience = true,
                         ValidateLifetime = true,
                         ValidateIssuerSigningKey = true,
-                        ValidIssuer = configuration["JwtSecurityTokenSettings:Issuer"],
-                        ValidAudience = configuration["JwtSecurityTokenSettings:Audience"],
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtSecurityTokenSettings:Key"]))
+                        ValidIssuer = configuration.Issuer,
+                        ValidAudience = configuration.Audience,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration.Key)),
+                        RoleClaimType = ClaimTypes.Role
                     };
                 });
             return services;
@@ -82,10 +94,11 @@ namespace PrivateClinicsNetWebApi.Extensions
         public static IServiceCollection AddCustomServices(this IServiceCollection services)
         {
             services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<IRoleRepository, RoleRepository>();
+            services.AddScoped<IUserFactory, UserFactory>();
+            services.AddScoped<IFileReader, JsonFileReader>();
             services.AddScoped<IAuthService, AuthService>();
-            services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<ITokenService, JwtTokenService>();
+            services.AddScoped<IDataMigrationService, DataMigrationService>();
             return services;
         }
 
@@ -98,7 +111,7 @@ namespace PrivateClinicsNetWebApi.Extensions
                 {
                     Title = "Private clinics network WebApi",
                     Version = "v1",
-                    Description = "Task 1.Implementation of User Authorization and Registration"
+                    Description = "Task 3.Implementation data migration"
                 });
 
                 options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme

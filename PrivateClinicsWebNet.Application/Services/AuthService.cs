@@ -1,21 +1,8 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using PrivateClinicsWebNet.Application.Abstractions;
+﻿using PrivateClinicsWebNet.Application.Abstractions;
 using PrivateClinicsWebNet.Application.DTOs;
 using PrivateClinicsWebNet.Application.Exceptions;
 using PrivateClinicsWebNet.BusinessLogic.Abstractions;
-using PrivateClinicsWebNet.BusinessLogic.Entities;
-using PrivateClinicsWebNet.BusinessLogic.Repositories;
 using PrivateClinicsWebNet.DataAccess.Abstractions;
-using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PrivateClinicsWebNet.Application.Services
 {
@@ -23,13 +10,13 @@ namespace PrivateClinicsWebNet.Application.Services
     {
         private readonly IUserRepository _userRepository;
         private readonly ITokenService _tokenService;
-        private readonly IMapper _mapper;
+        private readonly IUserFactory _userFactory;
 
-        public AuthService(IUserRepository userRepository, ITokenService tokenService, IMapper mapper)
+        public AuthService(IUserRepository userRepository, ITokenService tokenService, IUserFactory userFactory)
         {
             _userRepository = userRepository;
             _tokenService = tokenService;
-            _mapper = mapper;
+            _userFactory = userFactory;
         }
 
         public async Task<string> Login(LoginDto loginDto)
@@ -44,23 +31,18 @@ namespace PrivateClinicsWebNet.Application.Services
             {
                 throw new InvalidPasswordException();
             }
-
-            var token = _tokenService.GenerateJwt(user, loginDto.Email);
+            var userRoles = await _userRepository.GetRolesByUser(user);
+            var token = _tokenService.GenerateJwt(user, loginDto.Email, userRoles);
             return token;
         }
 
         public async Task Register(RegisterDto registerDto)
         {
-            var user = _mapper.Map<IdentityUser>(registerDto);
-            var result = await _userRepository.RegisterUser(user, registerDto.Password);
-            var supportedRoles = RoleRegistry.GetRoles();
+            var user = _userFactory.GetUser(registerDto.Email, registerDto.UserRole);
+            var result = await _userRepository.RegisterUserAsync(user, registerDto.Password);
             if (!result.Succeeded)
             {
                 throw new RegistrationFailedException();
-            }
-            if (!supportedRoles.Any(x => x.Name == registerDto.UserRole))
-            {
-                throw new InvalidUserRoleException(registerDto.UserRole);
             }
             await _userRepository.AddToRoleAsync(user, registerDto.UserRole);
         }
