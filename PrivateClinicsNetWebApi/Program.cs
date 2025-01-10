@@ -1,6 +1,9 @@
 using PrivateClinicsWebNet.DataAccess.Middlewares;
 using PrivateClinicsNetWebApi.Extensions;
 using PrivateClinicsWebNet.Infrastructure.Migrator.Models;
+using PrivateClinicsWebNet.DataAccess.Entities;
+using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Configuration;
 
 namespace PrivateClinicsNetWebApi
 {
@@ -20,6 +23,8 @@ namespace PrivateClinicsNetWebApi
         private void Run(string[] args)
         {
             _builder = WebApplication.CreateBuilder(args);
+            var jwtSettings = new JwtSecurityTokenSettings();
+            _builder.Configuration.GetSection("JwtSecurityTokenSettings").Bind(jwtSettings);
             _configuration = _builder.Configuration;
             _builder.Logging.ClearProviders();
             _builder.Logging.AddConsole();
@@ -28,7 +33,7 @@ namespace PrivateClinicsNetWebApi
             _services.AddUserMigrationOptions(nameof(UserMigrationOptions), _configuration);
             _services.AddPostgresDb(_configuration);
             _services.AddUserAuthorization();
-            _services.AddUserAuthentication(_configuration);
+            _services.AddUserAuthentication(jwtSettings);
             _services.AddCustomServices();
             _services.AddMappers();
             _services.AddSwagger();

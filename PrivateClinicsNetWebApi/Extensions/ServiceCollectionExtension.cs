@@ -16,6 +16,8 @@ using PrivateClinicsWebNet.BusinessLogic.Factories;
 using PrivateClinicsWebNet.Infrastructure.Migrator.Models;
 using PrivateClinicsWebNet.Infrastructure.Migrator.Abstractions;
 using PrivateClinicsWebNet.Infrastructure.Migrator.Services;
+using Microsoft.Extensions.Options;
+using System.Security.Claims;
 
 namespace PrivateClinicsNetWebApi.Extensions
 {
@@ -59,7 +61,7 @@ namespace PrivateClinicsNetWebApi.Extensions
             return services;
         }
 
-        public static IServiceCollection AddUserAuthentication(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddUserAuthentication(this IServiceCollection services, JwtSecurityTokenSettings configuration)
         {
             services.AddAuthentication(options =>
             {
@@ -68,15 +70,17 @@ namespace PrivateClinicsNetWebApi.Extensions
             })
                 .AddJwtBearer(options =>
                 {
+                    options.IncludeErrorDetails = true;
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuer = true,
                         ValidateAudience = true,
                         ValidateLifetime = true,
                         ValidateIssuerSigningKey = true,
-                        ValidIssuer = configuration["JwtSecurityTokenSettings:Issuer"],
-                        ValidAudience = configuration["JwtSecurityTokenSettings:Audience"],
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtSecurityTokenSettings:Key"]))
+                        ValidIssuer = configuration.Issuer,
+                        ValidAudience = configuration.Audience,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration.Key)),
+                        RoleClaimType = ClaimTypes.Role
                     };
                 });
             return services;

@@ -30,24 +30,27 @@ namespace PrivateClinicsWebNet.DataAccess.Services
             return token;
         }
 
-        private string GenerateEncryptedToken(IEnumerable<Claim> claimsList, SigningCredentials signingCredentials)
+        private string GenerateEncryptedToken(IEnumerable<Claim> claimsList, SigningCredentials _signingCredentials)
         {
             double jwtExpirationDays = Convert.ToDouble(_configuration.ExpirationDays);
             var token = new JwtSecurityToken(
                 claims: claimsList,
                 expires: DateTime.UtcNow.AddDays(jwtExpirationDays),
-                signingCredentials: signingCredentials);
+                signingCredentials: _signingCredentials,
+                issuer: _configuration.Issuer,
+                audience: _configuration.Audience);
             var tokenHandler = new JwtSecurityTokenHandler();
             string encryptedToken = tokenHandler.WriteToken(token);
             return encryptedToken;
         }
 
-        private IEnumerable<Claim> GetClaimsAsync(IdentityUser user, string email)
+        private IEnumerable<Claim> GetClaimsAsync(IdentityUser user, string email, string role)
         {
             var claims = new List<Claim>()
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Id),
-                new Claim(JwtRegisteredClaimNames.Email, email)
+                new Claim(JwtRegisteredClaimNames.Email, email),
+                new Claim(ClaimTypes.Role, role)
             };
             return claims;
         }

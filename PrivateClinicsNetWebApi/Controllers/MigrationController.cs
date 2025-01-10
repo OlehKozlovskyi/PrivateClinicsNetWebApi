@@ -17,7 +17,8 @@ namespace PrivateClinicsNetWebApi.Controllers
             _migrationService = migrationService;    
         }
 
-        [HttpPost("migrate-data")]
+        [HttpPost("migration")]
+        [Authorize(Roles = "Doctor")]
         public async Task<IActionResult> RunMigration(string path = @"C:/Users/OlehKozlovskyi/Documents/GitHub/test3.json")
         {
             var result = await _migrationService.MigrateDataAsync(path);
