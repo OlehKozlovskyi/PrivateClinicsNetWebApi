@@ -14,6 +14,11 @@
     <ProjectReference Include="..\BusinessLogic\PrivateClinicsWebNet.BusinessLogic.csproj" />
     <ProjectReference Include="..\PrivateClinicsWebNet.Application\PrivateClinicsWebNet.Application.csproj" />
     <ProjectReference Include="..\PrivateClinicsWebNet.DataAccess\PrivateClinicsWebNet.DataAccess.csproj" />
+    <ProjectReference Include="..\PrivateClinicsWebNet.Infrastructure.Shared\PrivateClinicsWebNet.Infrastructure.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="AppointmentInfrastructure\Abstractions\" />
   </ItemGroup>
 
 </Project>

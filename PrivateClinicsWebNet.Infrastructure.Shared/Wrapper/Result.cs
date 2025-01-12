@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PrivateClinicsWebNet.Application.Wrapper
+namespace PrivateClinicsWebNet.Infrastructure.Shared.Wrapper
 {
     public class Result<T>
     {

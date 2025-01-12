@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using PrivateClinicsWebNet.Application.Wrapper;
+using PrivateClinicsWebNet.Infrastructure.Shared.Wrapper;
 
 namespace PrivateClinicsNetWebApi.Extensions
 {

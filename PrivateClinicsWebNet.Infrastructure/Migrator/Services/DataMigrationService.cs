@@ -8,6 +8,7 @@ using PrivateClinicsWebNet.DataAccess;
 using PrivateClinicsWebNet.Infrastructure.Migrator.Abstractions;
 using PrivateClinicsWebNet.Infrastructure.Migrator.Models;
 using PrivateClinicsWebNet.Infrastructure.Migrator.Exceptions;
+using PrivateClinicsWebNet.Infrastructure.Shared.Wrapper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +17,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using System.Numerics;
-using PrivateClinicsWebNet.Application.Wrapper;
+
 
 namespace PrivateClinicsWebNet.Infrastructure.Migrator.Services
 {
