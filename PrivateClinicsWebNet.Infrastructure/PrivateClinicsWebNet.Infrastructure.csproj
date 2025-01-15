@@ -17,8 +17,4 @@
     <ProjectReference Include="..\PrivateClinicsWebNet.Infrastructure.Shared\PrivateClinicsWebNet.Infrastructure.Shared.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="AppointmentInfrastructure\Abstractions\" />
-  </ItemGroup>
-
 </Project>

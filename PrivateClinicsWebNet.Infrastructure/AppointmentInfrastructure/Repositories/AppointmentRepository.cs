@@ -3,6 +3,7 @@ using PrivateClinicsWebNet.Application.DTOs;
 using PrivateClinicsWebNet.BusinessLogic.Abstractions;
 using PrivateClinicsWebNet.BusinessLogic.Entities;
 using PrivateClinicsWebNet.DataAccess;
+using PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.Abstractions;
 using PrivateClinicsWebNet.Infrastructure.Shared.Wrapper;
 using System;
 using System.Collections.Generic;
@@ -21,13 +22,24 @@ namespace PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.Reposito
             _context = context;
         }
 
-        public async Task<Result<Appointment>> GetAppointmentByIdAsync(string id)
+        public async Task<Appointment> GetAppointmentByIdAsync(string id)
         {
             var appointment = await _context.Appointments
-                .FirstAsync(x => x.ExternalId == id);
-            if (appointment == null)
-                return Result<Appointment>.Failure($"The appointment with ID {id} wasn`t found.");
-            return await Result<Appointment>.SuccessAsync(appointment);
+                .FirstOrDefaultAsync(x => x.Id.ToString() == id);
+            return appointment;
+        }
+
+        public async Task<bool> СreateAppointmentAsync(Appointment appointment)
+        {
+            var result = await _context.Appointments
+                .AddAsync(appointment);
+            return result.IsKeySet;
+        }
+
+        public async Task UpdateAppointmentAsync(Appointment appointment)
+        {
+            _context.Appointments.Update(appointment);
+            await _context.SaveChangesAsync();
         }
 
         public async Task<Result<List<Appointment>>> GetDoctorAppointmentsAsync(string doctorId)
@@ -54,26 +66,6 @@ namespace PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.Reposito
             return await Result<List<Appointment>>.SuccessAsync(patientAppointments);
         }
 
-        public async Task<Result<string>> СreateAppointmentAsync(Appointment appointment)
-        {
-            var result = await _context.Appointments
-                .AddAsync(appointment);
-            if (result.IsKeySet)
-                return await Result<string>.SuccessAsync($"Appointment was created successfully: ID {appointment.Id}");
-            return Result<string>.Failure("Failed to create the appointment due to a system issue");
-        }
-
-        public async Task<Result<string>> UpdateAppointmentAsync(Appointment appointment)
-        {
-            var appointmentFromDb = await _context.Appointments
-                .FirstOrDefaultAsync(a => a.Id == appointment.Id);
-            if (appointmentFromDb == null)
-                return Result<string>.Failure();
-            _context.Appointments.Update(appointment);
-            await _context.SaveChangesAsync();
-            return await Result<string>.SuccessAsync("Appointment was updated successfully.");
-        }
-
         public async Task<Result<string>> DeleteAppointmentAsync(string appointmentId)
         {
             var appointment = await _context.Appointments
@@ -83,6 +75,11 @@ namespace PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.Reposito
             _context.Appointments.Remove(appointment);
             await _context.SaveChangesAsync();
             return await Result<string>.SuccessAsync($"Appointment has been successfully deleted.");
+        }
+
+        public async Task<bool> IsAppointmentExistAsync(string appointmentId)
+        {
+            return await _context.Appointments.AnyAsync(x => x.Id.ToString()==appointmentId);
         }
     }
 }

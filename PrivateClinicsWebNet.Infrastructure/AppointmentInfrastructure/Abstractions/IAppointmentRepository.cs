@@ -6,10 +6,11 @@ namespace PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.Abstract
     public interface IAppointmentRepository
     {
         Task<Result<string>> DeleteAppointmentAsync(string appointmentId);
-        Task<Result<Appointment>> GetAppointmentByIdAsync(string id);
+        Task<Appointment> GetAppointmentByIdAsync(string id);
         Task<Result<List<Appointment>>> GetDoctorAppointmentsAsync(string doctorId);
         Task<Result<List<Appointment>>> GetPatientAppointmentsAsync(string patientId);
-        Task<Result<string>> UpdateAppointmentAsync(Appointment appointment);
-        Task<Result<string>> СreateAppointmentAsync(Appointment appointment);
+        Task UpdateAppointmentAsync(Appointment appointment);
+        Task<bool> СreateAppointmentAsync(Appointment appointment);
+        Task<bool> IsAppointmentExistAsync(string appointmentId);
     }
 }
