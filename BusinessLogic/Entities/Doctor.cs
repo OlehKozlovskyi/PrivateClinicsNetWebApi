@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace PrivateClinicsWebNet.BusinessLogic.Entities
 {
-    public class Doctor : IdentityUser, IHasAppointments
+    public class Doctor : IdentityUser
     {
         public string DoctorType { get; set; }
         public List<Appointment> Appointments { get; set; }
