@@ -1,14 +1,14 @@
 ﻿using PrivateClinicsWebNet.BusinessLogic.Entities;
 using PrivateClinicsWebNet.Infrastructure.Shared.Wrapper;
+using System.Linq.Expressions;
 
 namespace PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.Abstractions
 {
     public interface IAppointmentRepository
     {
-        Task<Result<string>> DeleteAppointmentAsync(string appointmentId);
+        Task DeleteAppointmentAsync(string appointmentId);
         Task<Appointment> GetAppointmentByIdAsync(string id);
-        Task<Result<List<Appointment>>> GetDoctorAppointmentsAsync(string doctorId);
-        Task<Result<List<Appointment>>> GetPatientAppointmentsAsync(string patientId);
+        Task<List<Appointment>> GetUserAppointmentsAsync(Expression<Func<Appointment, bool>> matchesUserId);
         Task UpdateAppointmentAsync(Appointment appointment);
         Task<bool> СreateAppointmentAsync(Appointment appointment);
         Task<bool> IsAppointmentExistAsync(string appointmentId);

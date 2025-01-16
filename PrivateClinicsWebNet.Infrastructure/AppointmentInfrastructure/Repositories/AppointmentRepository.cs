@@ -8,6 +8,7 @@ using PrivateClinicsWebNet.Infrastructure.Shared.Wrapper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -42,39 +43,19 @@ namespace PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.Reposito
             await _context.SaveChangesAsync();
         }
 
-        public async Task<Result<List<Appointment>>> GetDoctorAppointmentsAsync(string doctorId)
+        public async Task<List<Appointment>> GetUserAppointmentsAsync(Expression<Func<Appointment, bool>> matchesUserId)
         {
-            bool hasAppointments = await _context.Appointments
-                .AnyAsync(x => x.DoctorId == doctorId);
-            if (!hasAppointments)
-                return Result<List<Appointment>>.Failure($"Doctor with ID {doctorId} doesn`t have any appointments yet.");
-            var doctorAppointments = await _context.Appointments
-                .Where(a => a.DoctorId == doctorId)
+            return await _context.Appointments
+                .Where(matchesUserId)
                 .ToListAsync();
-            return await Result<List<Appointment>>.SuccessAsync(doctorAppointments);
         }
 
-        public async Task<Result<List<Appointment>>> GetPatientAppointmentsAsync(string patientId)
-        {
-            bool hasAppointments = await _context.Appointments
-                .AnyAsync(x => x.PatientId == patientId);
-            if (!hasAppointments)
-                return Result<List<Appointment>>.Failure($"Patient with ID {patientId} doesn`t have any appointments yet.");
-            var patientAppointments = await _context.Appointments
-                .Where(a => a.PatientId == patientId)
-                .ToListAsync();
-            return await Result<List<Appointment>>.SuccessAsync(patientAppointments);
-        }
-
-        public async Task<Result<string>> DeleteAppointmentAsync(string appointmentId)
+        public async Task DeleteAppointmentAsync(string appointmentId)
         {
             var appointment = await _context.Appointments
                 .FirstOrDefaultAsync(a => a.Id.ToString() == appointmentId);
-            if (appointment == null)
-                return Result<string>.Failure($"Appointment with ID {appointmentId} doesn`t exist in the system");
             _context.Appointments.Remove(appointment);
             await _context.SaveChangesAsync();
-            return await Result<string>.SuccessAsync($"Appointment has been successfully deleted.");
         }
 
         public async Task<bool> IsAppointmentExistAsync(string appointmentId)

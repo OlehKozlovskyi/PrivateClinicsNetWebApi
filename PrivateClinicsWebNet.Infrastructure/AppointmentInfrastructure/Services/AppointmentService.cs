@@ -4,6 +4,7 @@ using PrivateClinicsWebNet.Infrastructure.Shared.Wrapper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -43,6 +44,36 @@ namespace PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.Services
                     $"It doesn`t exist in system yet");
             await _appointmentRepository.UpdateAppointmentAsync(appointment);
             return await Result<string>.SuccessAsync("Appointment was updated successfully.");
+        }
+
+        public async Task<Result<List<Appointment>>> GetDoctorAppointmentsAsync(string doctorId)
+        {
+            Expression<Func<Appointment,bool>> matchesDoctorId = a=>a.DoctorId == doctorId;
+            var appointmentsList = await _appointmentRepository.GetUserAppointmentsAsync(matchesDoctorId);
+            if(appointmentsList == null)
+                return Result<List<Appointment>>.Failure($"Doctor with ID {doctorId} doesn`t have any appointments yet.");
+            return await Result<List<Appointment>>.SuccessAsync(appointmentsList);
+        }
+
+        public async Task<Result<List<Appointment>>> GetPatientAppointmentsAsync(string patientId)
+        {
+            Expression<Func<Appointment, bool>> matchesDoctorId = a => a.PatientId == patientId;
+            var appointmentsList = await _appointmentRepository.GetUserAppointmentsAsync(matchesDoctorId);
+            if (appointmentsList == null)
+                return Result<List<Appointment>>.Failure($"Patient with ID {patientId} doesn`t have any appointments yet.");
+            return await Result<List<Appointment>>.SuccessAsync(appointmentsList);
+        }
+
+        public async Task<Result<string>> DeleteAppointmentAsync(string appointmentId)
+        {
+            bool isExist = await _appointmentRepository.IsAppointmentExistAsync(appointmentId);
+            if(!isExist)
+                return Result<string>.Failure($"Appointment with ID {appointmentId} doesn`t exist in the system");
+            await _appointmentRepository.DeleteAppointmentAsync(appointmentId);
+            bool hasBeenDeleted = !await _appointmentRepository.IsAppointmentExistAsync(appointmentId);
+            if (hasBeenDeleted)
+                return await Result<string>.SuccessAsync($"Appointment has been successfully deleted.");
+            return Result<string>.Failure("Unrecordnized error");
         }
     }
 }
