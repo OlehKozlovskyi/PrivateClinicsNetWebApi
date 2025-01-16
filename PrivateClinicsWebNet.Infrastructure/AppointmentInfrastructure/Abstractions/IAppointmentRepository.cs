@@ -1,4 +1,5 @@
-﻿using PrivateClinicsWebNet.BusinessLogic.Entities;
+﻿using Microsoft.AspNetCore.Mvc.RazorPages;
+using PrivateClinicsWebNet.BusinessLogic.Entities;
 using PrivateClinicsWebNet.Infrastructure.Shared.Wrapper;
 using System.Linq.Expressions;
 
@@ -8,7 +9,7 @@ namespace PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.Abstract
     {
         Task DeleteAppointmentAsync(string appointmentId);
         Task<Appointment> GetAppointmentByIdAsync(string id);
-        Task<List<Appointment>> GetUserAppointmentsAsync(Expression<Func<Appointment, bool>> matchesUserId);
+        Task<List<Appointment>> GetUserAppointmentsAsync(Expression<Func<Appointment, bool>> matchesUserId, int page, int pageSize);
         Task UpdateAppointmentAsync(Appointment appointment);
         Task<bool> СreateAppointmentAsync(Appointment appointment);
         Task<bool> IsAppointmentExistAsync(string appointmentId);

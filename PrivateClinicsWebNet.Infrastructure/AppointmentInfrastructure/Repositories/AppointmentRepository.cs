@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using PrivateClinicsWebNet.Application.DTOs;
 using PrivateClinicsWebNet.BusinessLogic.Abstractions;
 using PrivateClinicsWebNet.BusinessLogic.Entities;
 using PrivateClinicsWebNet.DataAccess;
@@ -43,10 +42,13 @@ namespace PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.Reposito
             await _context.SaveChangesAsync();
         }
 
-        public async Task<List<Appointment>> GetUserAppointmentsAsync(Expression<Func<Appointment, bool>> matchesUserId)
+        public async Task<List<Appointment>> GetUserAppointmentsAsync(Expression<Func<Appointment, bool>> matchesUserId,
+            int page, int pageSize)
         {
             return await _context.Appointments
                 .Where(matchesUserId)
+                .Skip((page-1)*pageSize)
+                .Take(pageSize)
                 .ToListAsync();
         }
 

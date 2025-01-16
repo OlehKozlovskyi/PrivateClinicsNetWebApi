@@ -46,19 +46,19 @@ namespace PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.Services
             return await Result<string>.SuccessAsync("Appointment was updated successfully.");
         }
 
-        public async Task<Result<List<Appointment>>> GetDoctorAppointmentsAsync(string doctorId)
+        public async Task<Result<List<Appointment>>> GetDoctorAppointmentsAsync(string doctorId, int page, int pageSize)
         {
             Expression<Func<Appointment,bool>> matchesDoctorId = a=>a.DoctorId == doctorId;
-            var appointmentsList = await _appointmentRepository.GetUserAppointmentsAsync(matchesDoctorId);
+            var appointmentsList = await _appointmentRepository.GetUserAppointmentsAsync(matchesDoctorId, page, pageSize);
             if(appointmentsList == null)
                 return Result<List<Appointment>>.Failure($"Doctor with ID {doctorId} doesn`t have any appointments yet.");
             return await Result<List<Appointment>>.SuccessAsync(appointmentsList);
         }
 
-        public async Task<Result<List<Appointment>>> GetPatientAppointmentsAsync(string patientId)
+        public async Task<Result<List<Appointment>>> GetPatientAppointmentsAsync(string patientId, int page, int pageSize)
         {
             Expression<Func<Appointment, bool>> matchesDoctorId = a => a.PatientId == patientId;
-            var appointmentsList = await _appointmentRepository.GetUserAppointmentsAsync(matchesDoctorId);
+            var appointmentsList = await _appointmentRepository.GetUserAppointmentsAsync(matchesDoctorId, page, pageSize);
             if (appointmentsList == null)
                 return Result<List<Appointment>>.Failure($"Patient with ID {patientId} doesn`t have any appointments yet.");
             return await Result<List<Appointment>>.SuccessAsync(appointmentsList);

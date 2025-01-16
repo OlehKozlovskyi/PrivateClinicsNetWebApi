@@ -6,11 +6,12 @@ using System.Threading.Tasks;
 
 namespace PrivateClinicsWebNet.Application.DTOs
 {
-    public record AppointmentRequestDto
+    public record CreateAppointmentDto
     {
-        public string ExternalId {  get; set; }
+        public string ExternalId { get; set; }
         public string PatientId { get; set; }
         public string DoctorId { get; set; }
-        public DateTime Date { get; set; }
+        public string Date { get; set; }
+        public string Time {  get; set; }
     }
 }
