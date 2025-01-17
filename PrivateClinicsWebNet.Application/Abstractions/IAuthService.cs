@@ -1,4 +1,5 @@
 ﻿using PrivateClinicsWebNet.Application.DTOs;
+using PrivateClinicsWebNet.Application.DTOs.AuthDTOs;
 
 namespace PrivateClinicsWebNet.Application.Abstractions
 {

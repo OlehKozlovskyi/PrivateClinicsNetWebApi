@@ -38,6 +38,13 @@ namespace PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.Reposito
 
         public async Task UpdateAppointmentAsync(Appointment appointment)
         {
+            var existingAppointment = await _context.Appointments.FindAsync(appointment.Id);
+            if(appointment.DoctorId != null)
+                existingAppointment.DoctorId = appointment.DoctorId;
+            if (appointment.PatientId != null)
+                existingAppointment.PatientId = appointment.PatientId;
+            if(appointment.Date != null)
+                existingAppointment.Date = appointment.Date;
             _context.Appointments.Update(appointment);
             await _context.SaveChangesAsync();
         }

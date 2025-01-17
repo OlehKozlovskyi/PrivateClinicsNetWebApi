@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PrivateClinicsWebNet.Application.Abstractions;
 using PrivateClinicsWebNet.Application.DTOs;
+using PrivateClinicsWebNet.Application.DTOs.AuthDTOs;
 using PrivateClinicsWebNet.Application.Services;
 
 namespace PrivateClinicsNetWebApi.Controllers

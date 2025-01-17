@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using PrivateClinicsWebNet.Application.DTOs;
+using PrivateClinicsWebNet.Application.DTOs.AppointmentsDTOs;
 using PrivateClinicsWebNet.BusinessLogic.Entities;
 using System;
 using System.Collections.Generic;

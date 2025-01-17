@@ -1,5 +1,6 @@
 ﻿using PrivateClinicsWebNet.Application.Abstractions;
 using PrivateClinicsWebNet.Application.DTOs;
+using PrivateClinicsWebNet.Application.DTOs.AuthDTOs;
 using PrivateClinicsWebNet.Application.Exceptions;
 using PrivateClinicsWebNet.BusinessLogic.Abstractions;
 using PrivateClinicsWebNet.DataAccess.Abstractions;

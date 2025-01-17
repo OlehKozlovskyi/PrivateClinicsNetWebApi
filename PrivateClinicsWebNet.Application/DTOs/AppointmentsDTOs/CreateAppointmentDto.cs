@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PrivateClinicsWebNet.Application.DTOs
+namespace PrivateClinicsWebNet.Application.DTOs.AppointmentsDTOs
 {
     public record CreateAppointmentDto
     {
@@ -12,6 +12,6 @@ namespace PrivateClinicsWebNet.Application.DTOs
         public string PatientId { get; set; }
         public string DoctorId { get; set; }
         public string Date { get; set; }
-        public string Time {  get; set; }
+        public string Time { get; set; }
     }
 }

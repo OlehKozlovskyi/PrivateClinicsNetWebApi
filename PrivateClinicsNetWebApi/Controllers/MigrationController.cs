@@ -18,7 +18,6 @@ namespace PrivateClinicsNetWebApi.Controllers
         }
 
         [HttpPost("/migrate")]
-        [Authorize(Roles = "Doctor")]
         public async Task<IActionResult> RunMigration(string path)
         {
             var result = await _migrationService.MigrateDataAsync(path);
