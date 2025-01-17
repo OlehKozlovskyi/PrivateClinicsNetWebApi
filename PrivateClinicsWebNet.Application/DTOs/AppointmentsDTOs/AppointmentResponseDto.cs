@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PrivateClinicsWebNet.Application.DTOs.AppointmentsDTOs
 {
-    public record AppointmentDto
+    public record AppointmentResponseDto
     {
         public string AppointmentId {  get; set; }
         public string PatientName {  get; set; }

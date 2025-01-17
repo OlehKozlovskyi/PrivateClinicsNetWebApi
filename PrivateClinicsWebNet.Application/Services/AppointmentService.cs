@@ -23,13 +23,14 @@ namespace PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.Services
             _mapper = mapper;
         }
 
-        public async Task<Result<Appointment>> GetAppointmentAsync(string id)
+        public async Task<Result<AppointmentResponseDto>> GetAppointmentAsync(string id)
         {
             bool isAppointmentExist = await _appointmentRepository.IsAppointmentExistAsync(id);
             if (!isAppointmentExist)
-                return Result<Appointment>.Failure($"The appointment with ID {id} wasn`t found.");
+                return Result<AppointmentResponseDto>.Failure($"The appointment with ID {id} wasn`t found.");
             var appointment = await _appointmentRepository.GetAppointmentByIdAsync(id);
-            return await Result<Appointment>.SuccessAsync(appointment);
+            var response = _mapper.Map<AppointmentResponseDto>(appointment);
+            return await Result<AppointmentResponseDto>.SuccessAsync(response);
         }
 
         public async Task<Result<string>> CreateAppointmentAsync(CreateAppointmentDto appointmentDto)
@@ -52,22 +53,34 @@ namespace PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.Services
             return await Result<string>.SuccessAsync("Appointment was updated successfully.");
         }
 
-        public async Task<Result<List<Appointment>>> GetDoctorAppointmentsAsync(DoctorAppointmentsRequestDto requestDto)
+        public async Task<Result<List<AppointmentResponseDto>>> GetDoctorAppointmentsAsync(DoctorAppointmentsRequestDto requestDto)
         {
             Expression<Func<Appointment,bool>> matchesDoctorId = a=>a.DoctorId == requestDto.DoctorId;
             var appointmentsList = await _appointmentRepository.GetUserAppointmentsAsync(matchesDoctorId, requestDto.Page, requestDto.PageSize);
             if(appointmentsList == null)
-                return Result<List<Appointment>>.Failure($"Doctor with ID {requestDto.DoctorId} doesn`t have any appointments yet.");
-            return await Result<List<Appointment>>.SuccessAsync(appointmentsList);
+                return Result<List<AppointmentResponseDto>>.Failure($"Doctor with ID {requestDto.DoctorId} doesn`t have any appointments yet.");
+            var appointmentListResponse = new List<AppointmentResponseDto>();
+            foreach (var appointment in appointmentsList)
+            {
+                var response = _mapper.Map<AppointmentResponseDto>(appointment);
+                appointmentListResponse.Add(response);
+            }
+            return await Result<List<AppointmentResponseDto>>.SuccessAsync(appointmentListResponse);
         }
 
-        public async Task<Result<List<Appointment>>> GetPatientAppointmentsAsync(PatientAppointmentsRequestDto requestDto)
+        public async Task<Result<List<AppointmentResponseDto>>> GetPatientAppointmentsAsync(PatientAppointmentsRequestDto requestDto)
         {
             Expression<Func<Appointment, bool>> matchesDoctorId = a => a.PatientId == requestDto.PatientId;
             var appointmentsList = await _appointmentRepository.GetUserAppointmentsAsync(matchesDoctorId, requestDto.Page, requestDto.PageSize);
             if (appointmentsList == null)
-                return Result<List<Appointment>>.Failure($"Patient with ID {requestDto.PatientId} doesn`t have any appointments yet.");
-            return await Result<List<Appointment>>.SuccessAsync(appointmentsList);
+                return Result<List<AppointmentResponseDto>>.Failure($"Patient with ID {requestDto.PatientId} doesn`t have any appointments yet.");
+            var appointmentListResponse = new List<AppointmentResponseDto>();
+            foreach (var appointment in appointmentsList)
+            {
+                var response = _mapper.Map<AppointmentResponseDto>(appointment);
+                appointmentListResponse.Add(response);
+            }
+            return await Result<List<AppointmentResponseDto>>.SuccessAsync(appointmentListResponse);
         }
 
         public async Task<Result<string>> DeleteAppointmentAsync(string appointmentId)
