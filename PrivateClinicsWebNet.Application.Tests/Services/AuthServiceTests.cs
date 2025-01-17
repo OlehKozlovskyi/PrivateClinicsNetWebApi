@@ -3,12 +3,12 @@ using Moq;
 using PrivateClinicsWebNet.BusinessLogic.Abstractions;
 using PrivateClinicsWebNet.DataAccess.Abstractions;
 using Microsoft.AspNetCore.Identity;
-using PrivateClinicsWebNet.Application.DTOs;
 using FluentAssertions;
 using PrivateClinicsWebNet.Application.Exceptions;
 using PrivateClinicsWebNet.Application.Tests.TestData;
 using PrivateClinicsWebNet.BusinessLogic.Factories;
 using PrivateClinicsWebNet.BusinessLogic.Exceptions;
+using PrivateClinicsWebNet.Application.DTOs.AuthDTOs;
 
 namespace PrivateClinicsWebNet.Application.Tests.Services;
 

@@ -15,6 +15,7 @@ namespace PrivateClinicsWebNet.Application.Mapping
         public AppointmentUpdatingProfileMap() 
         {
             CreateMap<UpdateAppointmentDto, Appointment>()
+                .ForMember(dest=>dest.Id, opt=>opt.MapFrom(src=>src.Id))
                 .ForMember(dest=>dest.PatientId, opt=>opt.MapFrom(src=>src.PatientId))
                 .ForMember(dest=>dest.DoctorId, opt=>opt.MapFrom(src=>src.DoctorId))
                 .ForMember(dest => dest.Date, opt => opt.MapFrom(src => DateTime.Parse($"{src.Date} {src.Time}", CultureInfo.InvariantCulture)));

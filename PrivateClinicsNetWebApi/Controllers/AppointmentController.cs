@@ -11,13 +11,13 @@ namespace PrivateClinicsNetWebApi.Controllers
     {
         private readonly IAppointmentService _appointmentService;
 
-        public AppointmentController(IAppointmentService appointmentService) 
+        public AppointmentController(IAppointmentService appointmentService)
         {
             _appointmentService = appointmentService;
         }
 
         [HttpGet]
-        [Route("/{id}")]
+        [Route("/appointments/{id}")]
         public async Task<IActionResult> GetAppointment([FromBody] string id)
         {
             var result = await _appointmentService.GetAppointmentAsync(id);
@@ -25,7 +25,7 @@ namespace PrivateClinicsNetWebApi.Controllers
         }
 
         [HttpPost]
-        [Route("")]
+        [Route("/appointments/{appointmentDto.ExternalId}")]
         public async Task<IActionResult> CreateAppointment([FromBody] CreateAppointmentDto appointmentDto)
         {
             var result = await _appointmentService.CreateAppointmentAsync(appointmentDto);
@@ -33,7 +33,7 @@ namespace PrivateClinicsNetWebApi.Controllers
         }
 
         [HttpPut]
-        [Route("/{id}")]
+        [Route("/appointments/{appointmentDto.Id}")]
         public async Task<IActionResult> UpdateAppointment([FromBody] UpdateAppointmentDto appointmentDto)
         {
             var result = await _appointmentService.UpdateAppointmentAsync(appointmentDto);
@@ -41,7 +41,7 @@ namespace PrivateClinicsNetWebApi.Controllers
         }
 
         [HttpGet]
-        [Route("/users/{requestDto.DoctorId}/appointments")]
+        [Route("/doctor/{requestDto.DoctorId}/appointments")]
         public async Task<IActionResult> GetDoctorAppointments([FromRoute] DoctorAppointmentsRequestDto requestDto)
         {
             var result = await _appointmentService.GetDoctorAppointmentsAsync(requestDto);
@@ -49,7 +49,7 @@ namespace PrivateClinicsNetWebApi.Controllers
         }
 
         [HttpGet]
-        [Route("users/{requestDto.PatientId}/appointments")]
+        [Route("/patient/{requestDto.PatientId}/appointments")]
         public async Task<IActionResult> GetPatientAppointments([FromRoute] PatientAppointmentsRequestDto requestDto)
         {
             var result = await _appointmentService.GetPatientAppointmentsAsync(requestDto);
@@ -57,7 +57,7 @@ namespace PrivateClinicsNetWebApi.Controllers
         }
 
         [HttpDelete]
-        [Route("/{id}")]
+        [Route("/appointments/{id}")]
         public async Task<IActionResult> DeleteAppointment([FromRoute] string id)
         {
             var result = await _appointmentService.DeleteAppointmentAsync(id);

@@ -18,6 +18,9 @@ using PrivateClinicsWebNet.Infrastructure.Migrator.Abstractions;
 using PrivateClinicsWebNet.Infrastructure.Migrator.Services;
 using Microsoft.Extensions.Options;
 using System.Security.Claims;
+using PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.Abstractions;
+using PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.Repositories;
+using PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.Services;
 
 namespace PrivateClinicsNetWebApi.Extensions
 {
@@ -94,11 +97,13 @@ namespace PrivateClinicsNetWebApi.Extensions
         public static IServiceCollection AddCustomServices(this IServiceCollection services)
         {
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IAppointmentRepository, AppointmentRepository>();
             services.AddScoped<IUserFactory, UserFactory>();
             services.AddScoped<IFileReader, JsonFileReader>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<ITokenService, JwtTokenService>();
             services.AddScoped<IDataMigrationService, DataMigrationService>();
+            services.AddScoped<IAppointmentService, AppointmentService>();
             return services;
         }
 
