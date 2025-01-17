@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using PrivateClinicsWebNet.Application.Abstractions;
 using PrivateClinicsWebNet.Application.DTOs.AppointmentsDTOs;
 using PrivateClinicsWebNet.BusinessLogic.Entities;
 using PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.Abstractions;
@@ -12,12 +13,12 @@ using System.Threading.Tasks;
 
 namespace PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.Services
 {
-    public class AppointmentService
+    public class AppointmentService : IAppointmentService
     {
         private readonly IAppointmentRepository _appointmentRepository;
         private readonly IMapper _mapper;
 
-        public AppointmentService(IAppointmentRepository appointmentRepository, IMapper mapper) 
+        public AppointmentService(IAppointmentRepository appointmentRepository, IMapper mapper)
         {
             _appointmentRepository = appointmentRepository;
             _mapper = mapper;
@@ -37,7 +38,7 @@ namespace PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.Services
         {
             var appointment = _mapper.Map<Appointment>(appointmentDto);
             var isCreatedResult = await _appointmentRepository.СreateAppointmentAsync(appointment);
-            if(isCreatedResult)
+            if (isCreatedResult)
                 return await Result<string>.SuccessAsync($"Appointment was created successfully: ID {appointment.Id}");
             return Result<string>.Failure("Failed to create the appointment due to a system issue");
         }
@@ -46,7 +47,7 @@ namespace PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.Services
         {
             var appointment = _mapper.Map<Appointment>(appointmentDto);
             bool isExist = await _appointmentRepository.IsAppointmentExistAsync(appointment.Id.ToString());
-            if(!isExist)
+            if (!isExist)
                 return Result<string>.Failure($"The appointment with ID {appointment.Id.ToString()} cannot be update." +
                     $"It doesn`t exist in system yet");
             await _appointmentRepository.UpdateAppointmentAsync(appointment);
@@ -55,9 +56,9 @@ namespace PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.Services
 
         public async Task<Result<List<AppointmentResponseDto>>> GetDoctorAppointmentsAsync(DoctorAppointmentsRequestDto requestDto)
         {
-            Expression<Func<Appointment,bool>> matchesDoctorId = a=>a.DoctorId == requestDto.DoctorId;
+            Expression<Func<Appointment, bool>> matchesDoctorId = a => a.DoctorId == requestDto.DoctorId;
             var appointmentsList = await _appointmentRepository.GetUserAppointmentsAsync(matchesDoctorId, requestDto.Page, requestDto.PageSize);
-            if(appointmentsList == null)
+            if (appointmentsList == null)
                 return Result<List<AppointmentResponseDto>>.Failure($"Doctor with ID {requestDto.DoctorId} doesn`t have any appointments yet.");
             var appointmentListResponse = new List<AppointmentResponseDto>();
             foreach (var appointment in appointmentsList)
@@ -86,7 +87,7 @@ namespace PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.Services
         public async Task<Result<string>> DeleteAppointmentAsync(string appointmentId)
         {
             bool isExist = await _appointmentRepository.IsAppointmentExistAsync(appointmentId);
-            if(!isExist)
+            if (!isExist)
                 return Result<string>.Failure($"Appointment with ID {appointmentId} doesn`t exist in the system");
             await _appointmentRepository.DeleteAppointmentAsync(appointmentId);
             bool hasBeenDeleted = !await _appointmentRepository.IsAppointmentExistAsync(appointmentId);
