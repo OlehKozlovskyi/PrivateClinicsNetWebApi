@@ -54,12 +54,12 @@ namespace PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.Services
             return await Result<string>.SuccessAsync("Appointment was updated successfully.");
         }
 
-        public async Task<Result<List<AppointmentResponseDto>>> GetDoctorAppointmentsAsync(DoctorAppointmentsRequestDto requestDto)
+        public async Task<Result<List<AppointmentResponseDto>>> GetDoctorAppointmentsAsync(string id, AppointmentsRequestDto requestDto)
         {
-            Expression<Func<Appointment, bool>> matchesDoctorId = a => a.DoctorId == requestDto.DoctorId;
+            Expression<Func<Appointment, bool>> matchesDoctorId = a => a.DoctorId == id;
             var appointmentsList = await _appointmentRepository.GetUserAppointmentsAsync(matchesDoctorId, requestDto.Page, requestDto.PageSize);
             if (appointmentsList == null)
-                return Result<List<AppointmentResponseDto>>.Failure($"Doctor with ID {requestDto.DoctorId} doesn`t have any appointments yet.");
+                return Result<List<AppointmentResponseDto>>.Failure($"Doctor with ID {id} doesn`t have any appointments yet.");
             var appointmentListResponse = new List<AppointmentResponseDto>();
             foreach (var appointment in appointmentsList)
             {
@@ -69,12 +69,12 @@ namespace PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.Services
             return await Result<List<AppointmentResponseDto>>.SuccessAsync(appointmentListResponse);
         }
 
-        public async Task<Result<List<AppointmentResponseDto>>> GetPatientAppointmentsAsync(PatientAppointmentsRequestDto requestDto)
+        public async Task<Result<List<AppointmentResponseDto>>> GetPatientAppointmentsAsync(string id, AppointmentsRequestDto requestDto)
         {
-            Expression<Func<Appointment, bool>> matchesDoctorId = a => a.PatientId == requestDto.PatientId;
+            Expression<Func<Appointment, bool>> matchesDoctorId = a => a.PatientId == id;
             var appointmentsList = await _appointmentRepository.GetUserAppointmentsAsync(matchesDoctorId, requestDto.Page, requestDto.PageSize);
             if (appointmentsList == null)
-                return Result<List<AppointmentResponseDto>>.Failure($"Patient with ID {requestDto.PatientId} doesn`t have any appointments yet.");
+                return Result<List<AppointmentResponseDto>>.Failure($"Patient with ID {id} doesn`t have any appointments yet.");
             var appointmentListResponse = new List<AppointmentResponseDto>();
             foreach (var appointment in appointmentsList)
             {

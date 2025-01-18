@@ -1,12 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using PrivateClinicsNetWebApi.Extensions;
 using PrivateClinicsWebNet.Application.Abstractions;
 using PrivateClinicsWebNet.Application.DTOs.AppointmentsDTOs;
+using System.Security.Claims;
 
 namespace PrivateClinicsNetWebApi.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/appointments")]
     public class AppointmentController : ControllerBase
     {
         private readonly IAppointmentService _appointmentService;
@@ -17,48 +19,48 @@ namespace PrivateClinicsNetWebApi.Controllers
         }
 
         [HttpGet]
-        [Route("/appointments/{id}")]
-        public async Task<IActionResult> GetAppointment([FromBody] string id)
+        public async Task<IActionResult> GetAppointment([FromQuery] string id)
         {
             var result = await _appointmentService.GetAppointmentAsync(id);
             return result.ToResponse();
         }
 
         [HttpPost]
-        [Route("/appointments/{appointmentDto.ExternalId}")]
-        public async Task<IActionResult> CreateAppointment([FromBody] CreateAppointmentDto appointmentDto)
+        public async Task<IActionResult> CreateAppointment(CreateAppointmentDto appointmentDto)
         {
             var result = await _appointmentService.CreateAppointmentAsync(appointmentDto);
             return result.ToResponse();
         }
 
         [HttpPut]
-        [Route("/appointments/{appointmentDto.Id}")]
-        public async Task<IActionResult> UpdateAppointment([FromBody] UpdateAppointmentDto appointmentDto)
+        public async Task<IActionResult> UpdateAppointment(UpdateAppointmentDto appointmentDto)
         {
             var result = await _appointmentService.UpdateAppointmentAsync(appointmentDto);
             return result.ToResponse();
         }
 
+        [Authorize(Roles = "Doctor")]
         [HttpGet]
-        [Route("/doctor/{requestDto.DoctorId}/appointments")]
-        public async Task<IActionResult> GetDoctorAppointments([FromRoute] DoctorAppointmentsRequestDto requestDto)
+        [Route("/doctor/appointments")]
+        public async Task<IActionResult> GetDoctorAppointments([FromQuery] AppointmentsRequestDto requestDto)
         {
-            var result = await _appointmentService.GetDoctorAppointmentsAsync(requestDto);
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var result = await _appointmentService.GetDoctorAppointmentsAsync(userId, requestDto);
             return result.ToResponse();
         }
 
+        [Authorize(Roles = "Patient")]
         [HttpGet]
-        [Route("/patient/{requestDto.PatientId}/appointments")]
-        public async Task<IActionResult> GetPatientAppointments([FromRoute] PatientAppointmentsRequestDto requestDto)
+        [Route("/patient/appointments")]
+        public async Task<IActionResult> GetPatientAppointments([FromQuery] AppointmentsRequestDto requestDto)
         {
-            var result = await _appointmentService.GetPatientAppointmentsAsync(requestDto);
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var result = await _appointmentService.GetPatientAppointmentsAsync(userId, requestDto);
             return result.ToResponse();
         }
 
         [HttpDelete]
-        [Route("/appointments/{id}")]
-        public async Task<IActionResult> DeleteAppointment([FromRoute] string id)
+        public async Task<IActionResult> DeleteAppointment([FromQuery] string id)
         {
             var result = await _appointmentService.DeleteAppointmentAsync(id);
             return result.ToResponse();

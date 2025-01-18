@@ -25,6 +25,8 @@ namespace PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.Reposito
         public async Task<Appointment> GetAppointmentByIdAsync(string id)
         {
             var appointment = await _context.Appointments
+                .Include(entity=>entity.Patient)
+                .Include(entity=>entity.Doctor)
                 .FirstOrDefaultAsync(x => x.Id.ToString() == id);
             return appointment;
         }
@@ -33,6 +35,7 @@ namespace PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.Reposito
         {
             var result = await _context.Appointments
                 .AddAsync(appointment);
+            await _context.SaveChangesAsync();
             return result.IsKeySet;
         }
 
@@ -45,7 +48,6 @@ namespace PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.Reposito
                 existingAppointment.PatientId = appointment.PatientId;
             if(appointment.Date != null)
                 existingAppointment.Date = appointment.Date;
-            _context.Appointments.Update(appointment);
             await _context.SaveChangesAsync();
         }
 
@@ -56,6 +58,8 @@ namespace PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.Reposito
                 .Where(matchesUserId)
                 .Skip((page-1)*pageSize)
                 .Take(pageSize)
+                .Include(entity => entity.Patient)
+                .Include(entity => entity.Doctor)
                 .ToListAsync();
         }
 
