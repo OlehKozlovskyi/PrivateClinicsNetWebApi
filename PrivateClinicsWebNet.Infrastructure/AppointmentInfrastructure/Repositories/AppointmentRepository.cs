@@ -13,15 +13,8 @@ using System.Threading.Tasks;
 
 namespace PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.Repositories
 {
-    public class AppointmentRepository : IAppointmentRepository
+    public class AppointmentRepository(ApplicationDbContext _context) : IAppointmentRepository
     {
-        private readonly ApplicationDbContext _context;
-
-        public AppointmentRepository(ApplicationDbContext context)
-        {
-            _context = context;
-        }
-
         public async Task<Appointment> GetAppointmentByIdAsync(string id)
         {
             var appointment = await _context.Appointments
@@ -36,7 +29,7 @@ namespace PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.Reposito
             var result = await _context.Appointments
                 .AddAsync(appointment);
             await _context.SaveChangesAsync();
-            return result.IsKeySet;
+            return true;
         }
 
         public async Task UpdateAppointmentAsync(Appointment appointment)

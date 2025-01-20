@@ -23,15 +23,19 @@ namespace PrivateClinicsWebNet.Application.Services
         public async Task<string> Login(LoginDto loginDto)
         {
             var user = await _userRepository.FindByEmailAsync(loginDto.Email);
+
             if (user.UserName != loginDto.Email)
             {
                 throw new UserNotFoundException();
             }
+
             var passwordValid = await _userRepository.CheckPasswordAsync(user, loginDto.Password);
+            
             if (!passwordValid)
             {
                 throw new InvalidPasswordException();
             }
+
             var userRoles = await _userRepository.GetRolesByUser(user);
             var token = _tokenService.GenerateJwt(user, loginDto.Email, userRoles);
             return token;
@@ -41,10 +45,12 @@ namespace PrivateClinicsWebNet.Application.Services
         {
             var user = _userFactory.GetUser(registerDto.Email, registerDto.UserRole);
             var result = await _userRepository.RegisterUserAsync(user, registerDto.Password);
+            
             if (!result.Succeeded)
             {
                 throw new RegistrationFailedException();
             }
+
             await _userRepository.AddToRoleAsync(user, registerDto.UserRole);
         }
     }

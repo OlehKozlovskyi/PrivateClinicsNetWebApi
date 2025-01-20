@@ -9,33 +9,26 @@ namespace PrivateClinicsNetWebApi.Controllers
 {
     [ApiController]
     [Route("api/appointments")]
-    public class AppointmentController : ControllerBase
+    public class AppointmentController(IAppointmentService appointmentService) : ControllerBase
     {
-        private readonly IAppointmentService _appointmentService;
-
-        public AppointmentController(IAppointmentService appointmentService)
-        {
-            _appointmentService = appointmentService;
-        }
-
         [HttpGet]
         public async Task<IActionResult> GetAppointment([FromQuery] string id)
         {
-            var result = await _appointmentService.GetAppointmentAsync(id);
+            var result = await appointmentService.GetAppointmentAsync(id);
             return result.ToResponse();
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateAppointment(CreateAppointmentDto appointmentDto)
         {
-            var result = await _appointmentService.CreateAppointmentAsync(appointmentDto);
+            var result = await appointmentService.CreateAppointmentAsync(appointmentDto);
             return result.ToResponse();
         }
 
         [HttpPut]
         public async Task<IActionResult> UpdateAppointment(UpdateAppointmentDto appointmentDto)
         {
-            var result = await _appointmentService.UpdateAppointmentAsync(appointmentDto);
+            var result = await appointmentService.UpdateAppointmentAsync(appointmentDto);
             return result.ToResponse();
         }
 
@@ -45,7 +38,7 @@ namespace PrivateClinicsNetWebApi.Controllers
         public async Task<IActionResult> GetDoctorAppointments([FromQuery] AppointmentsRequestDto requestDto)
         {
             string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var result = await _appointmentService.GetDoctorAppointmentsAsync(userId, requestDto);
+            var result = await appointmentService.GetDoctorAppointmentsAsync(userId, requestDto);
             return result.ToResponse();
         }
 
@@ -55,14 +48,14 @@ namespace PrivateClinicsNetWebApi.Controllers
         public async Task<IActionResult> GetPatientAppointments([FromQuery] AppointmentsRequestDto requestDto)
         {
             string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var result = await _appointmentService.GetPatientAppointmentsAsync(userId, requestDto);
+            var result = await appointmentService.GetPatientAppointmentsAsync(userId, requestDto);
             return result.ToResponse();
         }
 
         [HttpDelete]
         public async Task<IActionResult> DeleteAppointment([FromQuery] string id)
         {
-            var result = await _appointmentService.DeleteAppointmentAsync(id);
+            var result = await appointmentService.DeleteAppointmentAsync(id);
             return result.ToResponse();
         }
     }
