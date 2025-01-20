@@ -8,7 +8,7 @@ namespace PrivateClinicsWebNet.Application.DTOs.AppointmentsDTOs
 {
     public record AppointmentsRequestDto
     {
-        public int Page {  get; set; }
-        public int PageSize { get; set; }
+        public int Page {  get; init; }
+        public int PageSize { get; init; }
     }
 }

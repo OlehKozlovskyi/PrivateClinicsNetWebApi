@@ -8,10 +8,10 @@ namespace PrivateClinicsWebNet.Application.DTOs.AppointmentsDTOs
 {
     public record AppointmentResponseDto
     {
-        public string AppointmentId {  get; set; }
-        public string PatientName {  get; set; }
-        public string DoctorName {  get; set; }
-        public string DoctorType {  get; set; }
-        public DateTime Date { get; set; }
+        public string AppointmentId {  get; init; }
+        public string PatientName {  get; init; }
+        public string DoctorName {  get; init; }
+        public string DoctorType {  get; init; }
+        public DateTime Date { get; init; }
     }
 }
