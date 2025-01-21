@@ -1,4 +1,5 @@
-﻿using PrivateClinicsWebNet.Application.DTOs.AppointmentsDTOs;
+﻿using PrivateClinicsWebNet.Application.DTOs.AppointmentDTOs;
+using PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.DTOs;
 using PrivateClinicsWebNet.Infrastructure.Shared.Wrapper;
 
 namespace PrivateClinicsWebNet.Application.Abstractions

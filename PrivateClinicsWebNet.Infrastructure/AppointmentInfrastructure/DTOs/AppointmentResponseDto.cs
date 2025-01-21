@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PrivateClinicsWebNet.Application.DTOs.AppointmentsDTOs
+namespace PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.DTOs
 {
     public record AppointmentResponseDto
     {

@@ -1,17 +1,16 @@
-﻿using Microsoft.AspNetCore.Mvc.RazorPages;
-using PrivateClinicsWebNet.BusinessLogic.Entities;
-using PrivateClinicsWebNet.Infrastructure.Shared.Wrapper;
+﻿using PrivateClinicsWebNet.BusinessLogic.Entities;
+using PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.DTOs;
 using System.Linq.Expressions;
 
 namespace PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.Abstractions
 {
     public interface IAppointmentRepository
     {
-        Task DeleteAppointmentAsync(string appointmentId);
-        Task<Appointment> GetAppointmentByIdAsync(string id);
-        Task<List<Appointment>> GetUserAppointmentsAsync(Expression<Func<Appointment, bool>> matchesUserId, int page, int pageSize);
+        Task<AppointmentResponseDto> GetAppointmentByIdAsync(string id);
+        Task<List<AppointmentResponseDto>> GetUserAppointmentsAsync(Expression<Func<Appointment, bool>> matchesUserId, int page, int pageSize);
+        Task<bool> IsAppointmentExistAsync(string appointmentId);
+        Task<bool> TryDeleteAppointmentAsync(string appointmentId);
         Task UpdateAppointmentAsync(Appointment appointment);
         Task<bool> СreateAppointmentAsync(Appointment appointment);
-        Task<bool> IsAppointmentExistAsync(string appointmentId);
     }
 }

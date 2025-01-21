@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using PrivateClinicsNetWebApi.Extensions;
 using PrivateClinicsWebNet.Application.Abstractions;
-using PrivateClinicsWebNet.Application.DTOs.AppointmentsDTOs;
+using PrivateClinicsWebNet.Application.DTOs.AppointmentDTOs;
 using System.Security.Claims;
 
 namespace PrivateClinicsNetWebApi.Controllers

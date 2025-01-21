@@ -3,6 +3,7 @@ using PrivateClinicsWebNet.BusinessLogic.Abstractions;
 using PrivateClinicsWebNet.BusinessLogic.Entities;
 using PrivateClinicsWebNet.DataAccess;
 using PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.Abstractions;
+using PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.DTOs;
 using PrivateClinicsWebNet.Infrastructure.Shared.Wrapper;
 using System;
 using System.Collections.Generic;
@@ -15,13 +16,20 @@ namespace PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.Reposito
 {
     public class AppointmentRepository(ApplicationDbContext _context) : IAppointmentRepository
     {
-        public async Task<Appointment> GetAppointmentByIdAsync(string id)
+        public async Task<AppointmentResponseDto> GetAppointmentByIdAsync(string id)
         {
-            var appointment = await _context.Appointments
-                .Include(entity=>entity.Patient)
-                .Include(entity=>entity.Doctor)
-                .FirstOrDefaultAsync(x => x.Id.ToString() == id);
-            return appointment;
+            var response = await _context.Appointments
+                .Where(x => x.Id.ToString() == id)
+                .Select(e => new AppointmentResponseDto
+                {
+                    AppointmentId = e.Id.ToString(),
+                    PatientName = e.Patient.UserName,
+                    DoctorName = e.Doctor.UserName,
+                    DoctorType = e.Doctor.DoctorType,
+                    Date = e.Date,
+                })
+                .FirstOrDefaultAsync();
+            return response;
         }
 
         public async Task<bool> СreateAppointmentAsync(Appointment appointment)
@@ -35,38 +43,44 @@ namespace PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.Reposito
         public async Task UpdateAppointmentAsync(Appointment appointment)
         {
             var existingAppointment = await _context.Appointments.FindAsync(appointment.Id);
-            if(appointment.DoctorId != null)
+            if (appointment.DoctorId != null)
                 existingAppointment.DoctorId = appointment.DoctorId;
             if (appointment.PatientId != null)
                 existingAppointment.PatientId = appointment.PatientId;
-            if(appointment.Date != null)
+            if (appointment.Date != null)
                 existingAppointment.Date = appointment.Date;
             await _context.SaveChangesAsync();
         }
 
-        public async Task<List<Appointment>> GetUserAppointmentsAsync(Expression<Func<Appointment, bool>> matchesUserId,
+        public async Task<List<AppointmentResponseDto>> GetUserAppointmentsAsync(Expression<Func<Appointment, bool>> matchesUserId,
             int page, int pageSize)
         {
             return await _context.Appointments
                 .Where(matchesUserId)
-                .Skip((page-1)*pageSize)
+                .Skip((page - 1) * pageSize)
                 .Take(pageSize)
-                .Include(entity => entity.Patient)
-                .Include(entity => entity.Doctor)
+                .Select(entity => new AppointmentResponseDto
+                {
+                    AppointmentId = entity.Id.ToString(),
+                    PatientName = entity.Patient.UserName,
+                    DoctorName = entity.Doctor.UserName,
+                    DoctorType = entity.Doctor.DoctorType,
+                    Date = entity.Date,
+                })
                 .ToListAsync();
         }
 
-        public async Task DeleteAppointmentAsync(string appointmentId)
+        public async Task<bool> TryDeleteAppointmentAsync(string appointmentId)
         {
-            var appointment = await _context.Appointments
-                .FirstOrDefaultAsync(a => a.Id.ToString() == appointmentId);
-            _context.Appointments.Remove(appointment);
-            await _context.SaveChangesAsync();
+            var rowsAffected = await _context.Appointments
+                .Where(x => x.Id.ToString() == appointmentId)
+                .ExecuteDeleteAsync();
+            return rowsAffected > 0;
         }
 
         public async Task<bool> IsAppointmentExistAsync(string appointmentId)
         {
-            return await _context.Appointments.AnyAsync(x => x.Id.ToString()==appointmentId);
+            return await _context.Appointments.AnyAsync(x => x.Id.ToString() == appointmentId);
         }
     }
 }

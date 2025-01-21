@@ -56,12 +56,14 @@ namespace PrivateClinicsWebNet.Infrastructure.Migrator.Services
                 }
                 await transaction.CommitAsync();
                 _logger.LogInformation("Migration has completed successfully", DateTime.UtcNow.ToLongTimeString());
+
                 return Result<string>.Success("Migration has completed successfully");
             }
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
                 _logger.LogError(ex, "Data migration operation has failed!", DateTime.UtcNow.ToLongTimeString());
+
                 return Result<string>.Failure("Data migration operation has failed!");
             }
         }

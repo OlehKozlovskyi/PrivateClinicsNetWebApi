@@ -20,7 +20,6 @@ using Microsoft.Extensions.Options;
 using System.Security.Claims;
 using PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.Abstractions;
 using PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.Repositories;
-using PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.Services;
 
 namespace PrivateClinicsNetWebApi.Extensions
 {
