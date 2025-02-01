@@ -1,9 +1,9 @@
-using PrivateClinicsWebNet.DataAccess.Middlewares;
 using PrivateClinicsNetWebApi.Extensions;
 using PrivateClinicsWebNet.Infrastructure.Migrator.Models;
 using PrivateClinicsWebNet.DataAccess.Entities;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Configuration;
+using PrivateClinicsNetWebApi.Middlewares;
 
 namespace PrivateClinicsNetWebApi
 {

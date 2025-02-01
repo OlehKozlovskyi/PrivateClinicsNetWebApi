@@ -17,6 +17,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BusinessLogic\PrivateClinicsWebNet.BusinessLogic.csproj" />
+    <ProjectReference Include="..\PrivateClinicsWebNet.Infrastructure.Shared\PrivateClinicsWebNet.Infrastructure.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Middlewares\" />
   </ItemGroup>
 
 </Project>
