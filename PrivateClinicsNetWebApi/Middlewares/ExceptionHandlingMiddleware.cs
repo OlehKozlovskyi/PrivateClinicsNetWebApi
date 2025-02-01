@@ -10,6 +10,7 @@ using PrivateClinicsWebNet.Infrastructure;
 using PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.Exceptions;
 using System.Net;
 using PrivateClinicsWebNet.BusinessLogic.Exceptions;
+using PrivateClinicsWebNet.Application.Exceptions;
 
 namespace PrivateClinicsNetWebApi.Middlewares
 {
@@ -44,11 +45,10 @@ namespace PrivateClinicsNetWebApi.Middlewares
                 case UnsupportedAppointmentUserException e:
                     response.StatusCode = (int) HttpStatusCode.NotFound;
                     break;
-                case InvalidUserRoleException e:
-                    response.StatusCode = (int) HttpStatusCode.BadRequest;
-                    break;
-                case InvalidUserTypeException e:
-                    response.StatusCode = (int) HttpStatusCode.BadRequest;
+                case InvalidUserRoleException:
+                case InvalidUserTypeException:
+                case InvalidAppointmentsIdException:
+                    response.StatusCode= (int) HttpStatusCode.BadRequest;
                     break;
                 default:
                     response.StatusCode = (int) HttpStatusCode.InternalServerError;

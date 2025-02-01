@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using PrivateClinicsWebNet.Application.Abstractions;
 using PrivateClinicsWebNet.Application.DTOs.AppointmentDTOs;
+using PrivateClinicsWebNet.Application.Exceptions;
 using PrivateClinicsWebNet.BusinessLogic.Entities;
 using PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.Abstractions;
 using PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.DTOs;
@@ -19,6 +20,11 @@ namespace PrivateClinicsWebNet.Application.Services
     {
         public async Task<Result<AppointmentResponseDto>> GetAppointmentAsync(string id)
         {
+            if (string.IsNullOrEmpty(id))
+            {
+                throw new InvalidAppointmentsIdException();
+            }
+
             bool isAppointmentExist = await appointmentRepository.IsAppointmentExistAsync(id);
 
             if (!isAppointmentExist)
