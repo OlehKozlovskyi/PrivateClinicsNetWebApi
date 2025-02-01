@@ -4,6 +4,7 @@ using PrivateClinicsWebNet.BusinessLogic.Entities;
 using PrivateClinicsWebNet.DataAccess;
 using PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.Abstractions;
 using PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.DTOs;
+using PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.Exceptions;
 using PrivateClinicsWebNet.Infrastructure.Shared.Wrapper;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,12 @@ namespace PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.Reposito
 {
     public class AppointmentRepository(ApplicationDbContext _context) : IAppointmentRepository
     {
+        private enum AppointmentsSupportEntities
+        {
+            Doctor,
+            Patient
+        }
+
         public async Task<AppointmentResponseDto> GetAppointmentByIdAsync(string id)
         {
             var response = await _context.Appointments
@@ -52,11 +59,10 @@ namespace PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.Reposito
             await _context.SaveChangesAsync();
         }
 
-        public async Task<List<AppointmentResponseDto>> GetUserAppointmentsAsync(Expression<Func<Appointment, bool>> matchesUserId,
-            int page, int pageSize)
+        public async Task<List<AppointmentResponseDto>> GetUserAppointmentsWithPaginationAsync(string userID, string userType, int page, int pageSize)
         {
-            return await _context.Appointments
-                .Where(matchesUserId)
+            var userAppointments = await GetUserAppointmentAsync(userID, userType);
+            return await userAppointments
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .Select(entity => new AppointmentResponseDto
@@ -81,6 +87,21 @@ namespace PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.Reposito
         public async Task<bool> IsAppointmentExistAsync(string appointmentId)
         {
             return await _context.Appointments.AnyAsync(x => x.Id.ToString() == appointmentId);
+        }
+
+        private async Task<IQueryable<Appointment>> GetUserAppointmentAsync(string id, string userType)
+        {
+            AppointmentsSupportEntities entity = Enum.Parse<AppointmentsSupportEntities>(userType);
+            switch (entity)
+            {
+                case AppointmentsSupportEntities.Patient:
+                    return _context.Appointments.Where(x => x.PatientId == id);
+                case AppointmentsSupportEntities.Doctor:
+                    return _context.Appointments.Where(x => x.DoctorId == id);
+                default:
+                    throw new UnsupportedAppointmentUserException($"User with ID {id} doesn`t support appointments");
+
+            }
         }
     }
 }

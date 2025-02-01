@@ -60,27 +60,13 @@ namespace PrivateClinicsWebNet.Application.Services
             return await Result<string>.SuccessAsync("Appointment was updated successfully.");
         }
 
-        public async Task<Result<List<AppointmentResponseDto>>> GetDoctorAppointmentsAsync(string id, AppointmentsRequestDto requestDto)
+        public async Task<Result<List<AppointmentResponseDto>>> GetUserAppointmentsAsync(string id, string userType, AppointmentsRequestDto requestDto)
         {
-            Expression<Func<Appointment, bool>> matchesDoctorId = a => a.DoctorId == id;
-            var appointmentListResponse = await appointmentRepository.GetUserAppointmentsAsync(matchesDoctorId, requestDto.Page, requestDto.PageSize);
+            var appointmentListResponse = await appointmentRepository.GetUserAppointmentsWithPaginationAsync(id, userType, requestDto.Page, requestDto.PageSize);
 
             if (!appointmentListResponse.Any())
             {
-                return Result<List<AppointmentResponseDto>>.Failure($"Doctor with ID {id} doesn`t have any appointments yet.");
-            }
-
-            return await Result<List<AppointmentResponseDto>>.SuccessAsync(appointmentListResponse);
-        }
-
-        public async Task<Result<List<AppointmentResponseDto>>> GetPatientAppointmentsAsync(string id, AppointmentsRequestDto requestDto)
-        {
-            Expression<Func<Appointment, bool>> matchesPatientId = a => a.PatientId == id;
-            var appointmentListResponse = await appointmentRepository.GetUserAppointmentsAsync(matchesPatientId, requestDto.Page, requestDto.PageSize);
-
-            if (!appointmentListResponse.Any())
-            {
-                return Result<List<AppointmentResponseDto>>.Failure($"Patient with ID {id} doesn`t have any appointments yet.");
+                return Result<List<AppointmentResponseDto>>.Failure($"User with ID {id} doesn`t have any appointments yet.");
             }
 
             return await Result<List<AppointmentResponseDto>>.SuccessAsync(appointmentListResponse);
@@ -89,7 +75,7 @@ namespace PrivateClinicsWebNet.Application.Services
         public async Task<Result<string>> DeleteAppointmentAsync(string appointmentId)
         {
             bool isCompleted = await appointmentRepository.TryDeleteAppointmentAsync(appointmentId);
-            
+
             if (!isCompleted)
             {
                 return Result<string>.Failure($"Failed to delete the appointment.");
