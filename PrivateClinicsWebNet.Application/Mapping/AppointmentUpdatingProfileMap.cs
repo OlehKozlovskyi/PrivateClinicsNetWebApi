@@ -18,7 +18,16 @@ namespace PrivateClinicsWebNet.Application.Mapping
                 .ForMember(dest=>dest.Id, opt=>opt.MapFrom(src=>src.Id))
                 .ForMember(dest=>dest.PatientId, opt=>opt.MapFrom(src=>src.PatientId))
                 .ForMember(dest=>dest.DoctorId, opt=>opt.MapFrom(src=>src.DoctorId))
-                .ForMember(dest => dest.Date, opt => opt.MapFrom(src => DateTime.Parse($"{src.Date} {src.Time}", CultureInfo.InvariantCulture)));
+                .ForMember(dest => dest.Date, opt => opt.MapFrom(src => TryParseDate(src.Date, src.Time)));
+        }
+
+        private static DateTime TryParseDate(string date, string time)
+        {
+            DateTime parsedDateTime;
+            if(DateTime.TryParse($"{date} {time}", CultureInfo.InvariantCulture, DateTimeStyles.None, out parsedDateTime))
+                return parsedDateTime;
+            return
+                DateTime.MinValue;
         }
     }
 }

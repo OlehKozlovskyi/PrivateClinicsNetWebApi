@@ -7,7 +7,7 @@ using PrivateClinicsWebNet.Application.Services;
 namespace PrivateClinicsNetWebApi.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/v1/authentication")]
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;

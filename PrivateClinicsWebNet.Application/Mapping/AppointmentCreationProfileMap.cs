@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using PrivateClinicsWebNet.Application.DTOs.AppointmentDTOs;
+using PrivateClinicsWebNet.Application.Exceptions;
 using PrivateClinicsWebNet.BusinessLogic.Entities;
 using System;
 using System.Collections.Generic;
@@ -19,7 +20,16 @@ namespace PrivateClinicsWebNet.Application.Mapping
                 .ForMember(dest => dest.ExternalId, opt => opt.MapFrom(src => src.ExternalId))
                 .ForMember(dest => dest.PatientId, opt => opt.MapFrom(src => src.PatientId))
                 .ForMember(dest => dest.DoctorId, opt => opt.MapFrom(src => src.DoctorId))
-                .ForMember(dest => dest.Date, opt => opt.MapFrom(src => DateTime.Parse($"{src.Date} {src.Time}", CultureInfo.InvariantCulture)));
+                .ForMember(dest => dest.Date, opt => opt.MapFrom(src => TryParseDate(src.Date, src.Time)));
+        }
+
+        private static DateTime TryParseDate(string date, string time)
+        {
+            DateTime parsedDateTime;
+            if (DateTime.TryParse($"{date} {time}", CultureInfo.InvariantCulture, DateTimeStyles.None, out parsedDateTime))
+                return parsedDateTime;
+            else
+                return DateTime.MinValue;
         }
     }
 }

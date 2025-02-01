@@ -6,7 +6,7 @@ using PrivateClinicsWebNet.Infrastructure.Migrator.Abstractions;
 
 namespace PrivateClinicsNetWebApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v1/migration")]
     [ApiController]
     public class MigrationController : ControllerBase
     {
@@ -17,7 +17,7 @@ namespace PrivateClinicsNetWebApi.Controllers
             _migrationService = migrationService;    
         }
 
-        [HttpPost("/migrate")]
+        [HttpPost("migrate")]
         public async Task<IActionResult> RunMigration(string path)
         {
             var result = await _migrationService.MigrateDataAsync(path);

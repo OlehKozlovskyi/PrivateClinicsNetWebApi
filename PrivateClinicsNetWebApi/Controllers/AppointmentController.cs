@@ -8,11 +8,12 @@ using System.Security.Claims;
 namespace PrivateClinicsNetWebApi.Controllers
 {
     [ApiController]
-    [Route("api/appointments")]
+    [Route("api/v1/appointments")]
     public class AppointmentController(IAppointmentService appointmentService) : ControllerBase
     {
         [HttpGet]
-        public async Task<IActionResult> GetAppointment([FromQuery] string id)
+        [Route("{id}")]
+        public async Task<IActionResult> GetAppointment([FromRoute] string id)
         {
             var result = await appointmentService.GetAppointmentAsync(id);
             return result.ToResponse();
