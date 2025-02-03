@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FluentValidation;
 using PrivateClinicsWebNet.Application.Abstractions;
 using PrivateClinicsWebNet.Application.DTOs.AppointmentDTOs;
 using PrivateClinicsWebNet.Application.Exceptions;
@@ -8,6 +9,7 @@ using PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.DTOs;
 using PrivateClinicsWebNet.Infrastructure.Shared.Wrapper;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
@@ -16,7 +18,10 @@ using System.Threading.Tasks;
 namespace PrivateClinicsWebNet.Application.Services
 {
     public class AppointmentService(IAppointmentRepository appointmentRepository,
-        IMapper mapper) : IAppointmentService
+        IMapper mapper,
+        IValidator<AppointmentsRequestDto> requestValidator,
+        IValidator<CreateAppointmentDto> createDtoValidator,
+        IValidator<UpdateAppointmentDto> updateDtoValidator) : IAppointmentService
     {
         public async Task<Result<AppointmentResponseDto>> GetAppointmentAsync(string id)
         {
@@ -39,6 +44,13 @@ namespace PrivateClinicsWebNet.Application.Services
 
         public async Task<Result<string>> CreateAppointmentAsync(CreateAppointmentDto appointmentDto)
         {
+            var validationResult = createDtoValidator.Validate(appointmentDto);
+            
+            if (!validationResult.IsValid)
+            {
+                throw new InvalidAppointmentDataException();
+            }
+
             var appointment = mapper.Map<Appointment>(appointmentDto);
             var isCreatedResult = await appointmentRepository.СreateAppointmentAsync(appointment);
 
@@ -52,6 +64,13 @@ namespace PrivateClinicsWebNet.Application.Services
 
         public async Task<Result<string>> UpdateAppointmentAsync(UpdateAppointmentDto appointmentDto)
         {
+            var validationResult = updateDtoValidator.Validate(appointmentDto);
+            
+            if (!validationResult.IsValid)
+            {
+                throw new InvalidAppointmentDataException();
+            }
+
             var appointment = mapper.Map<Appointment>(appointmentDto);
             bool isExist = await appointmentRepository.IsAppointmentExistAsync(appointment.Id.ToString());
 
@@ -68,6 +87,18 @@ namespace PrivateClinicsWebNet.Application.Services
 
         public async Task<Result<List<AppointmentResponseDto>>> GetUserAppointmentsAsync(string id, string userType, AppointmentsRequestDto requestDto)
         {
+            if (string.IsNullOrEmpty(id))
+            {
+                throw new InvalidUserIdException($"Invalid user ID: {id}");
+            }
+
+            var validationResult = requestValidator.Validate(requestDto);
+            
+            if (!validationResult.IsValid)
+            {
+                return Result<List<AppointmentResponseDto>>.Failure($"Page and PageSize must be greater than 0");
+            }
+
             var appointmentListResponse = await appointmentRepository.GetUserAppointmentsWithPaginationAsync(id, userType, requestDto.Page, requestDto.PageSize);
 
             if (!appointmentListResponse.Any())
@@ -80,6 +111,11 @@ namespace PrivateClinicsWebNet.Application.Services
 
         public async Task<Result<string>> DeleteAppointmentAsync(string appointmentId)
         {
+            if (string.IsNullOrEmpty(appointmentId))
+            {
+                throw new InvalidAppointmentsIdException();
+            }
+
             bool isCompleted = await appointmentRepository.TryDeleteAppointmentAsync(appointmentId);
 
             if (!isCompleted)
