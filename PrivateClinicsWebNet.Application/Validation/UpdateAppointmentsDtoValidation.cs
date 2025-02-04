@@ -12,7 +12,8 @@ namespace PrivateClinicsWebNet.Application.Validation
     {
         public UpdateAppointmentsDtoValidation()
         {
-            RuleFor(a=>a.Id).NotNull().NotEmpty();
+            RuleFor(a=>a.Id).NotNull().NotEmpty()
+                .WithMessage("This field is required, so it can`t be empty");
         }
     }
 }

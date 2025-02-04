@@ -30,14 +30,12 @@ namespace PrivateClinicsWebNet.Application.Services
                 throw new InvalidAppointmentsIdException();
             }
 
-            bool isAppointmentExist = await appointmentRepository.IsAppointmentExistAsync(id);
+            var response = await appointmentRepository.GetAppointmentByIdAsync(id);
 
-            if (!isAppointmentExist)
+            if (response == null)
             {
                 return Result<AppointmentResponseDto>.Failure($"The appointment with ID {id} wasn`t found.");
             }
-
-            var response = await appointmentRepository.GetAppointmentByIdAsync(id);
 
             return await Result<AppointmentResponseDto>.SuccessAsync(response);
         }

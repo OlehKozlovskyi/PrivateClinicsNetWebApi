@@ -12,8 +12,10 @@ namespace PrivateClinicsWebNet.Application.Validation
     {
         public AppointmentsRequestDtoValidator()
         {
-            RuleFor(request => request.Page).GreaterThan(0);
-            RuleFor(request=>request.PageSize).GreaterThan(0);
+            RuleFor(request => request.Page).GreaterThan(0)
+                .WithMessage("Number of page must be greater than 0");
+            RuleFor(request => request.PageSize).GreaterThan(0)
+                .WithMessage("Page can`t contain fewer than 1 record");
         }
     }
 }

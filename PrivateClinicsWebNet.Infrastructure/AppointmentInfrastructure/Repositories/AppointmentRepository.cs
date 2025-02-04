@@ -61,7 +61,7 @@ namespace PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.Reposito
 
         public async Task<List<AppointmentResponseDto>> GetUserAppointmentsWithPaginationAsync(string userID, string userType, int page, int pageSize)
         {
-            var userAppointments = await GetUserAppointmentAsync(userID, userType);
+            var userAppointments = GetUserAppointmentAsync(userID, userType);
             return await userAppointments
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
@@ -89,7 +89,7 @@ namespace PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.Reposito
             return await _context.Appointments.AnyAsync(x => x.Id.ToString() == appointmentId);
         }
 
-        private async Task<IQueryable<Appointment>> GetUserAppointmentAsync(string id, string userType)
+        private IQueryable<Appointment> GetUserAppointmentAsync(string id, string userType)
         {
             AppointmentsSupportEntities entity = Enum.Parse<AppointmentsSupportEntities>(userType);
             switch (entity)
