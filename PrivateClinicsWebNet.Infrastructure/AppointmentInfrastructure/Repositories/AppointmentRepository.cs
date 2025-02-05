@@ -41,6 +41,7 @@ namespace PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.Reposito
 
         public async Task<bool> СreateAppointmentAsync(Appointment appointment)
         {
+            appointment.Id = Guid.NewGuid();
             var result = await _context.Appointments
                 .AddAsync(appointment);
             await _context.SaveChangesAsync();
