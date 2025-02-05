@@ -43,8 +43,6 @@ namespace PrivateClinicsNetWebApi.Middlewares
             switch (error)
             {
                 case UnsupportedAppointmentUserException e:
-                    response.StatusCode = (int) HttpStatusCode.NotFound;
-                    break;
                 case InvalidUserRoleException:
                 case InvalidUserTypeException:
                 case InvalidAppointmentsIdException:

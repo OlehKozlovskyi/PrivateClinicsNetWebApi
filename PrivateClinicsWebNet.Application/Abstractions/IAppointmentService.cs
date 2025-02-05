@@ -9,7 +9,7 @@ namespace PrivateClinicsWebNet.Application.Abstractions
         Task<Result<string>> CreateAppointmentAsync(CreateAppointmentDto appointmentDto);
         Task<Result<string>> DeleteAppointmentAsync(string appointmentId);
         Task<Result<AppointmentResponseDto>> GetAppointmentAsync(string id);
-        Task<Result<List<AppointmentResponseDto>>> GetUserAppointmentsAsync(string id, string userType, AppointmentsRequestDto requestDto);
+        Task<Result<List<AppointmentResponseDto>>> GetUserAppointmentsAsync(string id, string userType, PageRequestDto requestDto);
         Task<Result<string>> UpdateAppointmentAsync(UpdateAppointmentDto appointmentDto);
     }
 }

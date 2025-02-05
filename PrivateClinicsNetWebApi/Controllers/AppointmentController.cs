@@ -35,7 +35,7 @@ namespace PrivateClinicsNetWebApi.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> GetUserAppointments([FromQuery] AppointmentsRequestDto requestDto)
+        public async Task<IActionResult> GetUserAppointments([FromQuery] PageRequestDto requestDto)
         {
             string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             string userType = User.FindFirstValue(ClaimTypes.Role);

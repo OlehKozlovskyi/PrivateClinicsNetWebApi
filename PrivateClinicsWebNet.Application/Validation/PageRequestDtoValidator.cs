@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace PrivateClinicsWebNet.Application.Validation
 {
-    public class AppointmentsRequestDtoValidator : AbstractValidator<AppointmentsRequestDto>
+    public class PageRequestDtoValidator : AbstractValidator<PageRequestDto>
     {
-        public AppointmentsRequestDtoValidator()
+        public PageRequestDtoValidator()
         {
             RuleFor(request => request.Page).GreaterThan(0)
                 .WithMessage("Number of page must be greater than 0");

@@ -19,7 +19,7 @@ namespace PrivateClinicsWebNet.Application.Services
 {
     public class AppointmentService(IAppointmentRepository appointmentRepository,
         IMapper mapper,
-        IValidator<AppointmentsRequestDto> requestValidator,
+        IValidator<PageRequestDto> requestValidator,
         IValidator<CreateAppointmentDto> createDtoValidator,
         IValidator<UpdateAppointmentDto> updateDtoValidator) : IAppointmentService
     {
@@ -70,9 +70,9 @@ namespace PrivateClinicsWebNet.Application.Services
             }
 
             var appointment = mapper.Map<Appointment>(appointmentDto);
-            bool isExist = await appointmentRepository.IsAppointmentExistAsync(appointment.Id.ToString());
+            bool exist = await appointmentRepository.AppointmentExistAsync(appointment.Id.ToString());
 
-            if (!isExist)
+            if (!exist)
             {
                 return Result<string>.Failure($"The appointment with ID {appointment.Id.ToString()} cannot be update." +
                     $"It doesn`t exist in system yet");
@@ -83,7 +83,7 @@ namespace PrivateClinicsWebNet.Application.Services
             return await Result<string>.SuccessAsync("Appointment was updated successfully.");
         }
 
-        public async Task<Result<List<AppointmentResponseDto>>> GetUserAppointmentsAsync(string id, string userType, AppointmentsRequestDto requestDto)
+        public async Task<Result<List<AppointmentResponseDto>>> GetUserAppointmentsAsync(string id, string userType, PageRequestDto requestDto)
         {
             if (string.IsNullOrEmpty(id))
             {
@@ -97,7 +97,7 @@ namespace PrivateClinicsWebNet.Application.Services
                 return Result<List<AppointmentResponseDto>>.Failure($"Page and PageSize must be greater than 0");
             }
 
-            var appointmentListResponse = await appointmentRepository.GetUserAppointmentsWithPaginationAsync(id, userType, requestDto.Page, requestDto.PageSize);
+            var appointmentListResponse = await appointmentRepository.GetAppointmentsAsync(id, userType, requestDto.Page, requestDto.PageSize);
 
             if (!appointmentListResponse.Any())
             {
@@ -114,9 +114,9 @@ namespace PrivateClinicsWebNet.Application.Services
                 throw new InvalidAppointmentsIdException();
             }
 
-            bool isCompleted = await appointmentRepository.TryDeleteAppointmentAsync(appointmentId);
+            bool isDeleted = await appointmentRepository.TryDeleteAppointmentAsync(appointmentId);
 
-            if (!isCompleted)
+            if (!isDeleted)
             {
                 return Result<string>.Failure($"Failed to delete the appointment.");
             }

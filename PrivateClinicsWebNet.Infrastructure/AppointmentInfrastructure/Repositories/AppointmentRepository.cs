@@ -50,16 +50,12 @@ namespace PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.Reposito
         public async Task UpdateAppointmentAsync(Appointment appointment)
         {
             var existingAppointment = await _context.Appointments.FindAsync(appointment.Id);
-            if (appointment.DoctorId != null)
-                existingAppointment.DoctorId = appointment.DoctorId;
-            if (appointment.PatientId != null)
-                existingAppointment.PatientId = appointment.PatientId;
             if (appointment.Date != null)
                 existingAppointment.Date = appointment.Date;
             await _context.SaveChangesAsync();
         }
 
-        public async Task<List<AppointmentResponseDto>> GetUserAppointmentsWithPaginationAsync(string userID, string userType, int page, int pageSize)
+        public async Task<List<AppointmentResponseDto>> GetAppointmentsAsync(string userID, string userType, int page, int pageSize)
         {
             var userAppointments = GetUserAppointmentAsync(userID, userType);
             return await userAppointments
@@ -84,7 +80,7 @@ namespace PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.Reposito
             return rowsAffected > 0;
         }
 
-        public async Task<bool> IsAppointmentExistAsync(string appointmentId)
+        public async Task<bool> AppointmentExistAsync(string appointmentId)
         {
             return await _context.Appointments.AnyAsync(x => x.Id.ToString() == appointmentId);
         }

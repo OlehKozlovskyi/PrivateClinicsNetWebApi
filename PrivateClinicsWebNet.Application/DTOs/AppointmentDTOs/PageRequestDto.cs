@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PrivateClinicsWebNet.Application.DTOs.AppointmentDTOs
 {
-    public record AppointmentsRequestDto
+    public record PageRequestDto
     {
         public int Page { get; init; }
         public int PageSize { get; init; }

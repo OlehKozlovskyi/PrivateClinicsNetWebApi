@@ -16,7 +16,6 @@ namespace PrivateClinicsWebNet.Application.Validation
         {
             RuleFor(a=>a.PatientId).NotEmpty();
             RuleFor(a=>a.DoctorId).NotEmpty();
-            RuleFor(a=>a.ExternalId).NotEmpty();
             RuleFor(a=>a.Date).NotEmpty()
                 .Must(date => DateTime.TryParseExact(date, "yyyy-MM-dd",CultureInfo.InvariantCulture,
                 DateTimeStyles.None, out DateTime parsedDate) && parsedDate >= DateTime.Now.Date)

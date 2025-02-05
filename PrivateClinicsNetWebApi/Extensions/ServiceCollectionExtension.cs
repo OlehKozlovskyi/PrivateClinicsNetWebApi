@@ -108,7 +108,7 @@ namespace PrivateClinicsNetWebApi.Extensions
             services.AddScoped<IAppointmentService, AppointmentService>();
             services.AddScoped<IValidator<CreateAppointmentDto>, CreateAppointmentDtoValidation>();
             services.AddScoped<IValidator<UpdateAppointmentDto>, UpdateAppointmentsDtoValidation>();
-            services.AddScoped<IValidator<AppointmentsRequestDto>, AppointmentsRequestDtoValidator>();
+            services.AddScoped<IValidator<PageRequestDto>, PageRequestDtoValidator>();
             return services;
         }
 
