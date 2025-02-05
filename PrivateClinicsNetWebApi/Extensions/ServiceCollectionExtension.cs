@@ -23,6 +23,7 @@ using PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.Repositories
 using FluentValidation;
 using PrivateClinicsWebNet.Application.DTOs.AppointmentDTOs;
 using PrivateClinicsWebNet.Application.Validation;
+using System.Reflection;
 
 namespace PrivateClinicsNetWebApi.Extensions
 {
@@ -106,9 +107,7 @@ namespace PrivateClinicsNetWebApi.Extensions
             services.AddScoped<ITokenService, JwtTokenService>();
             services.AddScoped<IDataMigrationService, DataMigrationService>();
             services.AddScoped<IAppointmentService, AppointmentService>();
-            services.AddScoped<IValidator<CreateAppointmentDto>, CreateAppointmentDtoValidation>();
-            services.AddScoped<IValidator<UpdateAppointmentDto>, UpdateAppointmentsDtoValidation>();
-            services.AddScoped<IValidator<PageRequestDto>, PageRequestDtoValidator>();
+            services.AddValidatorsFromAssembly(Assembly.GetAssembly(typeof(PageRequestDtoValidator)));
             return services;
         }
 
