@@ -33,13 +33,23 @@ namespace PrivateClinicsNetWebApi.Controllers
             return result.ToResponse();
         }
 
-        [Authorize]
+        [Authorize(Roles ="Doctor")]
         [HttpGet]
-        public async Task<IActionResult> GetUserAppointments([FromQuery] PageRequestDto requestDto)
+        [Route("doctor-appointments")]
+        public async Task<IActionResult> GetDoctorAppointments([FromQuery] PageRequestDto requestDto)
         {
-            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            string userType = User.FindFirstValue(ClaimTypes.Role);
-            var result = await appointmentService.GetUserAppointmentsAsync(userId, userType, requestDto);
+            string doctorId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var result = await appointmentService.GetUserAppointmentsAsync(doctorId, null, requestDto);
+            return result.ToResponse();
+        }
+
+        [Authorize(Roles = "Patient")]
+        [HttpGet]
+        [Route("patient-appointments")]
+        public async Task<IActionResult> GetPatientAppointments([FromQuery] PageRequestDto requestDto)
+        {
+            string patientId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var result = await appointmentService.GetUserAppointmentsAsync(null, patientId, requestDto);
             return result.ToResponse();
         }
 

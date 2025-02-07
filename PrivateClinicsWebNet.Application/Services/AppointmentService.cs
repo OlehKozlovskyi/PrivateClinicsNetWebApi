@@ -43,7 +43,7 @@ namespace PrivateClinicsWebNet.Application.Services
         public async Task<Result<string>> CreateAppointmentAsync(CreateAppointmentDto appointmentDto)
         {
             var validationResult = createDtoValidator.Validate(appointmentDto);
-            
+
             if (!validationResult.IsValid)
             {
                 throw new InvalidAppointmentDataException();
@@ -63,7 +63,7 @@ namespace PrivateClinicsWebNet.Application.Services
         public async Task<Result<string>> UpdateAppointmentAsync(UpdateAppointmentDto appointmentDto)
         {
             var validationResult = updateDtoValidator.Validate(appointmentDto);
-            
+
             if (!validationResult.IsValid)
             {
                 throw new InvalidAppointmentDataException();
@@ -83,25 +83,20 @@ namespace PrivateClinicsWebNet.Application.Services
             return await Result<string>.SuccessAsync("Appointment was updated successfully.");
         }
 
-        public async Task<Result<List<AppointmentResponseDto>>> GetUserAppointmentsAsync(string id, string userType, PageRequestDto requestDto)
+        public async Task<Result<List<AppointmentResponseDto>>> GetUserAppointmentsAsync(string doctorId, string patientId, PageRequestDto requestDto)
         {
-            if (string.IsNullOrEmpty(id))
-            {
-                throw new InvalidUserIdException($"Invalid user ID: {id}");
-            }
-
             var validationResult = requestValidator.Validate(requestDto);
-            
+
             if (!validationResult.IsValid)
             {
                 return Result<List<AppointmentResponseDto>>.Failure($"Page and PageSize must be greater than 0");
             }
 
-            var appointmentListResponse = await appointmentRepository.GetAppointmentsAsync(id, userType, requestDto.Page, requestDto.PageSize);
+            var appointmentListResponse = await appointmentRepository.GetAppointmentsAsync(doctorId, patientId, requestDto.Page, requestDto.PageSize);
 
             if (!appointmentListResponse.Any())
             {
-                return Result<List<AppointmentResponseDto>>.Failure($"User with ID {id} doesn`t have any appointments yet.");
+                return Result<List<AppointmentResponseDto>>.Failure($"User doesn`t have any appointments yet.");
             }
 
             return await Result<List<AppointmentResponseDto>>.SuccessAsync(appointmentListResponse);

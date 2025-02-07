@@ -5,6 +5,7 @@ using PrivateClinicsWebNet.DataAccess;
 using PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.Abstractions;
 using PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.DTOs;
 using PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.Exceptions;
+using PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.Specifications;
 using PrivateClinicsWebNet.Infrastructure.Shared.Wrapper;
 using System;
 using System.Collections.Generic;
@@ -56,10 +57,11 @@ namespace PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.Reposito
             await _context.SaveChangesAsync();
         }
 
-        public async Task<List<AppointmentResponseDto>> GetAppointmentsAsync(string userID, string userType, int page, int pageSize)
+        public async Task<List<AppointmentResponseDto>> GetAppointmentsAsync(string doctorId, string patientId, int page, int pageSize)
         {
-            var userAppointments = GetUserAppointmentAsync(userID, userType);
-            return await userAppointments
+            var appointmentSpec = new AppointmentFilterSpecification(doctorId, patientId);
+            return await _context.Appointments
+                .Where(appointmentSpec.IsSatisfiedBy())
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .Select(entity => new AppointmentResponseDto
@@ -84,21 +86,6 @@ namespace PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.Reposito
         public async Task<bool> AppointmentExistAsync(string appointmentId)
         {
             return await _context.Appointments.AnyAsync(x => x.Id.ToString() == appointmentId);
-        }
-
-        private IQueryable<Appointment> GetUserAppointmentAsync(string id, string userType)
-        {
-            AppointmentsSupportEntities entity = Enum.Parse<AppointmentsSupportEntities>(userType);
-            switch (entity)
-            {
-                case AppointmentsSupportEntities.Patient:
-                    return _context.Appointments.Where(x => x.PatientId == id);
-                case AppointmentsSupportEntities.Doctor:
-                    return _context.Appointments.Where(x => x.DoctorId == id);
-                default:
-                    throw new UnsupportedAppointmentUserException($"User with ID {id} doesn`t support appointments");
-
-            }
         }
     }
 }

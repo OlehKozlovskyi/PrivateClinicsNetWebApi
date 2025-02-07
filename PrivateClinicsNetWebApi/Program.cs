@@ -39,6 +39,7 @@ namespace PrivateClinicsNetWebApi
             _services.AddSwagger();
             _builder.Services.AddControllers();
             var app = _builder.Build();
+            app.UseMiddleware<ValidationMiddleware>();
             app.UseMiddleware<ExceptionHandlingMiddleware>();
             if (app.Environment.IsDevelopment())
             {
