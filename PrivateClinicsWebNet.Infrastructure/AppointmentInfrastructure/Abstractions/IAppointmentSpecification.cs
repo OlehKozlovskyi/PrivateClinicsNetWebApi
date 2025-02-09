@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.Abstractions
 {
-    public interface ISpecification
+    public interface IAppointmentSpecification
     {
         Expression<Func<Appointment, bool>> IsSatisfiedBy();
     }

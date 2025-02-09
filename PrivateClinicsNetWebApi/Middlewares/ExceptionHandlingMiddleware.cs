@@ -47,6 +47,7 @@ namespace PrivateClinicsNetWebApi.Middlewares
                 case InvalidUserTypeException:
                 case InvalidAppointmentsIdException:
                 case InvalidAppointmentDataException:
+                case InvalidPageAndPageSizeException:
                     response.StatusCode= (int) HttpStatusCode.BadRequest;
                     break;
                 default:

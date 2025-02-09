@@ -44,10 +44,10 @@ namespace PrivateClinicsWebNet.Application.Services
         {
             var validationResult = createDtoValidator.Validate(appointmentDto);
 
-            if (!validationResult.IsValid)
-            {
-                throw new InvalidAppointmentDataException();
-            }
+            //if (!validationResult.IsValid)
+            //{
+            //    throw new InvalidAppointmentDataException();
+            //}
 
             var appointment = mapper.Map<Appointment>(appointmentDto);
             var isCreatedResult = await appointmentRepository.СreateAppointmentAsync(appointment);

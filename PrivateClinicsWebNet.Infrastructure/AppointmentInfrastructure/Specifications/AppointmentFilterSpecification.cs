@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.Specifications
 {
-    public class AppointmentFilterSpecification : ISpecification
+    public class AppointmentFilterSpecification : IAppointmentSpecification
     {
         private readonly string _doctorId;
         private readonly string _patientId;

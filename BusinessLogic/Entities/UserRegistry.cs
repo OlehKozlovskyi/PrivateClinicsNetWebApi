@@ -28,7 +28,7 @@ namespace PrivateClinicsWebNet.BusinessLogic.Entities
             return returnedType;
         }
 
-        public static IReadOnlyList<Type> GetIdentityUserSubclasses()
+        private static IReadOnlyList<Type> GetIdentityUserSubclasses()
         {
             var subclassesList = new List<Type>();
             var types = Assembly.GetExecutingAssembly().GetTypes();
