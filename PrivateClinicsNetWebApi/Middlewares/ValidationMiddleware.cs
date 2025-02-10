@@ -6,7 +6,6 @@ using Microsoft.OpenApi.Models;
 using PrivateClinicsNetWebApi.Controllers;
 using PrivateClinicsWebNet.Application.DTOs.AppointmentDTOs;
 using PrivateClinicsWebNet.Application.Exceptions;
-using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using System.Reflection.Metadata;
 using System.Text.Json;
@@ -18,12 +17,12 @@ namespace PrivateClinicsNetWebApi.Middlewares
     {
         private readonly RequestDelegate _next;
         private readonly string _appointmentsPath = @"/appointments";
-        private readonly IEnumerable<IValidator> _validators;
+        private readonly IServiceProvider _serviceProvider;
 
-        public ValidationMiddleware(RequestDelegate next, IEnumerable<IValidator> validators)
+        public ValidationMiddleware(RequestDelegate next, IServiceProvider serviceProvider)
         {
             _next = next;
-            _validators = validators;
+            _serviceProvider = serviceProvider;
         }
 
         public async Task Invoke(HttpContext context)
@@ -34,13 +33,13 @@ namespace PrivateClinicsNetWebApi.Middlewares
 
             if (requestUrl.Contains(_appointmentsPath))
             {
-                await ValidateAppointmentRequest(request);
+                await ProcessAppointmentValidation(request);
             }
 
             await _next(context);
         }
 
-        private async Task ValidateAppointmentRequest(HttpRequest httpRequest)
+        private async Task ProcessAppointmentValidation(HttpRequest httpRequest)
         {
             Type type = typeof(AppointmentController);
             var actionMethod = httpRequest.RouteValues["action"].ToString();
@@ -50,43 +49,30 @@ namespace PrivateClinicsNetWebApi.Middlewares
             foreach (var parameter in listOfParameters)
             {
                 var parameterType = parameter.ParameterType;
-                var result = await IsRequestValid(parameter, httpRequest);
+                await ValidateParameterIfApplicable(parameter, httpRequest);
             }
         }
 
-        private async Task<bool> IsRequestValid(ParameterInfo parameter, HttpRequest httpRequest)
+        private async Task ValidateParameterIfApplicable(ParameterInfo parameter, HttpRequest httpRequest)
         {
-            ValidationResult validationResult;
-
             if (parameter.ParameterType == typeof(CreateAppointmentDto))
-            {
-                validationResult = await ValidateRequestAsync<CreateAppointmentDto>(httpRequest);
-                if (!validationResult.IsValid)
-                    throw new InvalidAppointmentDataException();
-            }
+                await ValidateRequestAsync<CreateAppointmentDto>(httpRequest);
 
             if (parameter.ParameterType == typeof(PageRequestDto))
-            {
-                validationResult = await ValidateRequestAsync<PageRequestDto>(httpRequest);
-                if (!validationResult.IsValid)
-                    throw new InvalidPageAndPageSizeException();
-            }
-                 
+                await ValidateRequestAsync<PageRequestDto>(httpRequest);
+   
             if (parameter.ParameterType == typeof(UpdateAppointmentDto))
-            {
-                validationResult = await ValidateRequestAsync<UpdateAppointmentDto>(httpRequest);
-                if (!validationResult.IsValid)
-                    throw new InvalidAppointmentDataException();
-            }
-                
-            return true;
+                await ValidateRequestAsync<UpdateAppointmentDto>(httpRequest);
         }
 
-        private async Task<ValidationResult> ValidateRequestAsync<T>(HttpRequest httpRequest)
+        private async Task ValidateRequestAsync<T>(HttpRequest httpRequest)
         {
-            var validator = _validators.OfType<IValidator<T>>().SingleOrDefault();
+            using var scope = _serviceProvider.CreateScope();
+            var validator = scope.ServiceProvider.GetService<IValidator<T>>();
             var requestBody = await JsonSerializer.DeserializeAsync<T>(httpRequest.Body);
-            return await validator.ValidateAsync(requestBody);
+            var validationResult = await validator.ValidateAsync(requestBody);
+            if (!validationResult.IsValid)
+                throw new ValidationException(validationResult.Errors);
         }
     }
 }

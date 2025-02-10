@@ -42,13 +42,6 @@ namespace PrivateClinicsWebNet.Application.Services
 
         public async Task<Result<string>> CreateAppointmentAsync(CreateAppointmentDto appointmentDto)
         {
-            var validationResult = createDtoValidator.Validate(appointmentDto);
-
-            //if (!validationResult.IsValid)
-            //{
-            //    throw new InvalidAppointmentDataException();
-            //}
-
             var appointment = mapper.Map<Appointment>(appointmentDto);
             var isCreatedResult = await appointmentRepository.СreateAppointmentAsync(appointment);
 
@@ -62,13 +55,6 @@ namespace PrivateClinicsWebNet.Application.Services
 
         public async Task<Result<string>> UpdateAppointmentAsync(UpdateAppointmentDto appointmentDto)
         {
-            var validationResult = updateDtoValidator.Validate(appointmentDto);
-
-            if (!validationResult.IsValid)
-            {
-                throw new InvalidAppointmentDataException();
-            }
-
             var appointment = mapper.Map<Appointment>(appointmentDto);
             bool exist = await appointmentRepository.AppointmentExistAsync(appointment.Id.ToString());
 
@@ -85,13 +71,6 @@ namespace PrivateClinicsWebNet.Application.Services
 
         public async Task<Result<List<AppointmentResponseDto>>> GetUserAppointmentsAsync(string doctorId, string patientId, PageRequestDto requestDto)
         {
-            var validationResult = requestValidator.Validate(requestDto);
-
-            if (!validationResult.IsValid)
-            {
-                return Result<List<AppointmentResponseDto>>.Failure($"Page and PageSize must be greater than 0");
-            }
-
             var appointmentListResponse = await appointmentRepository.GetAppointmentsAsync(doctorId, patientId, requestDto.Page, requestDto.PageSize);
 
             if (!appointmentListResponse.Any())
