@@ -10,7 +10,7 @@ namespace PrivateClinicsWebNet.BusinessLogic.Entities
     {
         public Appointment() { }
 
-        public Appointment(string externalId, string patientId, string doctorId, DateTime date, Patient patient, Doctor doctor)
+        public Appointment(string externalId, string patientId, string doctorId, DateTime date, Patient patient, Doctor doctor, TimeOnly duration)
         {
             Id = Guid.NewGuid();
             ExternalId = externalId;
@@ -19,6 +19,7 @@ namespace PrivateClinicsWebNet.BusinessLogic.Entities
             Date = date;
             Patient = patient;
             Doctor = doctor;
+            Duration = duration;
         }
 
         public Guid Id { get; set; }
@@ -28,5 +29,6 @@ namespace PrivateClinicsWebNet.BusinessLogic.Entities
         public DateTime Date {  get; set; }
         public Patient Patient { get; set; }
         public Doctor Doctor { get; set; }
+        public TimeOnly Duration { get; set; }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using PrivateClinicsWebNet.Application.DTOs;
+using PrivateClinicsWebNet.Application.DTOs.AuthDTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;

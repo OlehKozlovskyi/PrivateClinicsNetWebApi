@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using PrivateClinicsWebNet.BusinessLogic.Abstractions;
 
 namespace PrivateClinicsWebNet.BusinessLogic.Entities
 {

@@ -41,6 +41,7 @@ namespace PrivateClinicsWebNet.DataAccess.Services
                 audience: _configuration.Audience);
             var tokenHandler = new JwtSecurityTokenHandler();
             string encryptedToken = tokenHandler.WriteToken(token);
+
             return encryptedToken;
         }
 

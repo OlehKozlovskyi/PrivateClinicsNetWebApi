@@ -1,4 +1,4 @@
-﻿using PrivateClinicsWebNet.Application.Wrapper;
+﻿using PrivateClinicsWebNet.Infrastructure.Shared.Wrapper;
 
 namespace PrivateClinicsWebNet.Infrastructure.Migrator.Abstractions
 {

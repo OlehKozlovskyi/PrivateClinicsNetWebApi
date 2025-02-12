@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
-using PrivateClinicsWebNet.Application.Wrapper;
+using PrivateClinicsWebNet.Infrastructure.Shared.Wrapper;
 using PrivateClinicsWebNet.BusinessLogic.Entities;
 using PrivateClinicsWebNet.Infrastructure.Migrator.DTOs;
 

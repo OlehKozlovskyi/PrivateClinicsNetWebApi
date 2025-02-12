@@ -1,4 +1,4 @@
-﻿using PrivateClinicsWebNet.Application.DTOs;
+﻿using PrivateClinicsWebNet.Application.DTOs.AuthDTOs;
 using System;
 using System.Collections;
 using System.Collections.Generic;

@@ -4,6 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PrivateClinicsWebNet.Application.DTOs;
+namespace PrivateClinicsWebNet.Application.DTOs.AuthDTOs;
 
 public record RegisterDto(string Email, string Password, string UserRole);

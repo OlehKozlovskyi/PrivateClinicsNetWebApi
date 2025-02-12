@@ -1,9 +1,9 @@
-using PrivateClinicsWebNet.DataAccess.Middlewares;
 using PrivateClinicsNetWebApi.Extensions;
 using PrivateClinicsWebNet.Infrastructure.Migrator.Models;
 using PrivateClinicsWebNet.DataAccess.Entities;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Configuration;
+using PrivateClinicsNetWebApi.Middlewares;
 
 namespace PrivateClinicsNetWebApi
 {
@@ -39,7 +39,12 @@ namespace PrivateClinicsNetWebApi
             _services.AddSwagger();
             _builder.Services.AddControllers();
             var app = _builder.Build();
-            app.UseMiddleware<ExceptionHandlingMiddleware>();
+            app.UseWhen(context => context.Request.Path.StartsWithSegments("/api/v1/appointments"),
+              appBuilder =>
+              {
+                  appBuilder.UseMiddleware<AppoinmentExceptionHandlerMiddleware>();
+              });
+            app.UseMiddleware<ValidationMiddleware>();
             if (app.Environment.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

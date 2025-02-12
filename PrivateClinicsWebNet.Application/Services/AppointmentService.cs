@@ -1,0 +1,101 @@
+﻿using AutoMapper;
+using FluentValidation;
+using PrivateClinicsWebNet.Application.Abstractions;
+using PrivateClinicsWebNet.Application.DTOs.AppointmentDTOs;
+using PrivateClinicsWebNet.Application.Exceptions;
+using PrivateClinicsWebNet.BusinessLogic.Entities;
+using PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.Abstractions;
+using PrivateClinicsWebNet.Infrastructure.AppointmentInfrastructure.DTOs;
+using PrivateClinicsWebNet.Infrastructure.Shared.Wrapper;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace PrivateClinicsWebNet.Application.Services
+{
+    public class AppointmentService(IAppointmentRepository appointmentRepository,
+        IMapper mapper,
+        IValidator<PageRequestDto> requestValidator,
+        IValidator<CreateAppointmentDto> createDtoValidator,
+        IValidator<UpdateAppointmentDto> updateDtoValidator) : IAppointmentService
+    {
+        public async Task<Result<AppointmentResponseDto>> GetAppointmentAsync(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                throw new InvalidAppointmentsIdException();
+            }
+
+            var response = await appointmentRepository.GetAppointmentByIdAsync(id);
+
+            if (response == null)
+            {
+                return Result<AppointmentResponseDto>.Failure($"The appointment with ID {id} wasn`t found.");
+            }
+
+            return await Result<AppointmentResponseDto>.SuccessAsync(response);
+        }
+
+        public async Task<Result<string>> CreateAppointmentAsync(CreateAppointmentDto appointmentDto)
+        {
+            var appointment = mapper.Map<Appointment>(appointmentDto);
+            var isCreatedResult = await appointmentRepository.СreateAppointmentAsync(appointment);
+
+            if (isCreatedResult)
+            {
+                return await Result<string>.SuccessAsync($"Appointment was created successfully: ID {appointment.Id}");
+            }
+
+            return Result<string>.Failure("Failed to create the appointment due to a system issue");
+        }
+
+        public async Task<Result<string>> UpdateAppointmentAsync(UpdateAppointmentDto appointmentDto)
+        {
+            var appointment = mapper.Map<Appointment>(appointmentDto);
+            bool exist = await appointmentRepository.AppointmentExistAsync(appointment.Id.ToString());
+
+            if (!exist)
+            {
+                return Result<string>.Failure($"The appointment with ID {appointment.Id.ToString()} cannot be update." +
+                    $"It doesn`t exist in system yet");
+            }
+
+            await appointmentRepository.UpdateAppointmentAsync(appointment);
+
+            return await Result<string>.SuccessAsync("Appointment was updated successfully.");
+        }
+
+        public async Task<Result<List<AppointmentResponseDto>>> GetUserAppointmentsAsync(string doctorId, string patientId, PageRequestDto requestDto)
+        {
+            var appointmentListResponse = await appointmentRepository.GetAppointmentsAsync(doctorId, patientId, requestDto.Page, requestDto.PageSize);
+
+            if (!appointmentListResponse.Any())
+            {
+                return Result<List<AppointmentResponseDto>>.Failure($"User doesn`t have any appointments yet.");
+            }
+
+            return await Result<List<AppointmentResponseDto>>.SuccessAsync(appointmentListResponse);
+        }
+
+        public async Task<Result<string>> DeleteAppointmentAsync(string appointmentId)
+        {
+            if (string.IsNullOrEmpty(appointmentId))
+            {
+                throw new InvalidAppointmentsIdException();
+            }
+
+            bool isDeleted = await appointmentRepository.TryDeleteAppointmentAsync(appointmentId);
+
+            if (!isDeleted)
+            {
+                return Result<string>.Failure($"Failed to delete the appointment.");
+            }
+
+            return await Result<string>.SuccessAsync($"Appointment has been successfully deleted.");
+        }
+    }
+}
