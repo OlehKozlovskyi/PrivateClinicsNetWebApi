@@ -3,11 +3,11 @@ using System.Text.Json;
 
 namespace PrivateClinicsNetWebApi.Middlewares
 {
-    public class ExceptionHandlerMiddleware
+    public class AppoinmentExceptionHandlerMiddleware
     {
         private readonly RequestDelegate _next;
 
-        public ExceptionHandlerMiddleware(RequestDelegate next)
+        public AppoinmentExceptionHandlerMiddleware(RequestDelegate next)
         {
             _next = next;
         }

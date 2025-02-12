@@ -39,7 +39,11 @@ namespace PrivateClinicsNetWebApi
             _services.AddSwagger();
             _builder.Services.AddControllers();
             var app = _builder.Build();
-            app.UseMiddleware<ExceptionHandlerMiddleware>();
+            app.UseWhen(context => context.Request.Path.StartsWithSegments("/api/v1/appointments"),
+              appBuilder =>
+              {
+                  appBuilder.UseMiddleware<AppoinmentExceptionHandlerMiddleware>();
+              });
             app.UseMiddleware<ValidationMiddleware>();
             if (app.Environment.IsDevelopment())
             {

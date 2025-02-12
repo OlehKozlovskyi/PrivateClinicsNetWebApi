@@ -4,6 +4,7 @@ using PrivateClinicsWebNet.Application.DTOs.AuthDTOs;
 using PrivateClinicsWebNet.Application.Exceptions;
 using PrivateClinicsWebNet.BusinessLogic.Abstractions;
 using PrivateClinicsWebNet.DataAccess.Abstractions;
+using PrivateClinicsWebNet.Infrastructure.Shared.Wrapper;
 
 namespace PrivateClinicsWebNet.Application.Services
 {
@@ -20,13 +21,13 @@ namespace PrivateClinicsWebNet.Application.Services
             _userFactory = userFactory;
         }
 
-        public async Task<string> Login(LoginDto loginDto)
+        public async Task<Result<string>> Login(LoginDto loginDto)
         {
             var user = await _userRepository.FindByEmailAsync(loginDto.Email);
 
-            if (user.UserName != loginDto.Email)
+            if (user is null || user.UserName != loginDto.Email)
             {
-                throw new UserNotFoundException();
+                return Result<string>.Failure("User not found.");
             }
 
             var passwordValid = await _userRepository.CheckPasswordAsync(user, loginDto.Password);
@@ -38,20 +39,21 @@ namespace PrivateClinicsWebNet.Application.Services
 
             var userRoles = await _userRepository.GetRolesByUser(user);
             var token = _tokenService.GenerateJwt(user, loginDto.Email, userRoles);
-            return token;
+            return await Result<string>.SuccessAsync(token);
         }
 
-        public async Task Register(RegisterDto registerDto)
+        public async Task<Result<string>> Register(RegisterDto registerDto)
         {
             var user = _userFactory.GetUser(registerDto.Email, registerDto.UserRole);
             var result = await _userRepository.RegisterUserAsync(user, registerDto.Password);
             
             if (!result.Succeeded)
             {
-                throw new RegistrationFailedException();
+                return Result<string>.Failure("Registration failed");
             }
 
             await _userRepository.AddToRoleAsync(user, registerDto.UserRole);
+            return await Result<string>.SuccessAsync("User was registered successfully");
         }
     }
 }

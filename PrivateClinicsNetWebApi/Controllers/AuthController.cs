@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using PrivateClinicsNetWebApi.Extensions;
 using PrivateClinicsWebNet.Application.Abstractions;
 using PrivateClinicsWebNet.Application.DTOs;
 using PrivateClinicsWebNet.Application.DTOs.AuthDTOs;
@@ -20,15 +21,15 @@ namespace PrivateClinicsNetWebApi.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDto model)
         {
-            await _authService.Register(model);
-            return Ok("User registered successfully");
+           var result = await _authService.Register(model);
+           return result.ToResponse();
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto model)
         {
-            string token = await _authService.Login(model);
-            return Ok(new { Token = token});
+            var result = await _authService.Login(model);
+            return result.ToResponse();
         }
     }
 }
